@@ -1,21 +1,21 @@
 :root {
     /* Light Mode Colors */
-    --txt-light: #2D2D2D; /* Dark text for light mode */
+    --txt-light: #2D2D2D;
     --bg-light: #F5F9FC;
     --prm-light: #0077B6;
     --scnd-light: #48CAE4;
     --ac-light: #FF6B6B;
-    
+
     /* Dark Mode Colors */
-    --txt-dark: #E0E0E0; /* Light text for dark mode */
+    --txt-dark: #E0E0E0;
     --bg-dark: #1A1A2E;
     --prm-dark: #0F3460;
     --scnd-dark: #00ADB5;
     --ac-dark: #FF2E63;
-    
+
     /* Shared Styles */
-    --font-prm: 'Rajdhani';
-    --font-scnd: 'Poppins';
+    --font-prm: 'Rajdhani', sans-serif;
+    --font-scnd: 'Poppins', sans-serif;
 }
 
 /* Light Mode */
@@ -31,7 +31,8 @@
 }
 
 /* Ensure HTML & Body Cover Full Height */
-html, body {
+html,
+body {
     height: 100%;
     margin: 0;
     padding: 0;
@@ -40,10 +41,9 @@ html, body {
 /* Navbar Styles */
 .nav-bar {
     width: 100%;
-    height: 80px;
+    height: 60px;
     background-color: var(--bg-light);
-    border-color: var(--prm-light);
-    border-width: 10px;
+    border: 1px solid var(--prm-light);
     display: flex;
     align-items: center;
     position: fixed;
@@ -54,33 +54,17 @@ html, body {
     background-color: var(--bg-light);
     font-family: var(--font-scnd);
     font-weight: 300;
-    font-size: 23px;
+    font-size: 20px;
     margin: 5px;
-    width: 140px;
     border: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
     border-radius: 5px;
 }
 
 .nav-button:hover {
-    background-color: lightblue;
-    color: var(--txt-light);
+    text-decoration: underline;
 }
 
-/* Light &  Mode Navbar */
-.light-mode .nav-bar {
-    background-color: var(--bg-light);
-    color: var(--txt-light);
-    border: 1px, solid, var(--prm-light);
-}
-
-.dark-mode .nav-bar {
-    background-color: var(--prm-dark);
-    color: var(--txt-light);
-    font-family: var(--font-prm);
-}
-
+/* Heading Styles */
 .heading {
     width: 100%;
     padding-left: 5%;
@@ -99,31 +83,55 @@ html, body {
     font-weight: 300;
 }
 
+/* Bulleted List & Step Styles */
 .bulleted-list {
-    padding-left: 5%;
+    /* padding-left: 5%; */
     width: 40%;
     font-family: var(--font-scnd);
+    margin-top: 40px;
+    /* spacing below heading */
 }
 
 .step {
     display: flex;
-    align-items: center; /* Align items vertically */
-    gap: 15px; /* Space between number and text */
+    align-items: flex-start;
+    margin-bottom: 40px;
 }
 
-.step-number {
-    font-weight: 900px;
+.step-left {
+    width: 40px;
+    /* Adjust width as needed */
+    text-align: center;
     font-size: 30px;
+    font-weight: 700;
     color: var(--ac-light);
-    align-items: top;
+    line-height: 1;
 }
 
-.step-content {
+.step-right {
     display: flex;
     flex-direction: column;
-    font-weight: 300;
 }
 
-.step-content h1 {
-    margin: 0;
+.step-title {
+    font-size: 24px;
+    font-weight: 400;
+    align-items: middle;
+}
+
+.step-bullet {
+    margin-left: 10px;
+    font-size: 18px;
+    /* You can adjust the color below if you want a different shade for the bullet text */
+    color: var(--txt-light);
+}
+
+.bulleted-list-graphic{
+    width: 70%;
+    border: 1px, solid, black;
+}
+
+.container {
+    margin: 50px;
+    display: flex;
 }
