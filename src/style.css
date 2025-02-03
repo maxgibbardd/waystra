@@ -39,23 +39,33 @@ html, body {
 
 /* Navbar Styles */
 .nav-bar {
+    width: 100%;
     height: 80px;
     background-color: var(--bg-light);
-    border-width: 10px;
     border-color: var(--prm-light);
+    border-width: 10px;
     display: flex;
     align-items: center;
-    padding: 0 20px;
+    position: fixed;
 }
 
 .nav-button {
-    height: 100%;
+    height: 80%;
     background-color: var(--bg-light);
     font-family: var(--font-scnd);
     font-weight: 300;
     font-size: 23px;
-    margin: 20px;
+    margin: 5px;
+    width: 140px;
     border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+    border-radius: 5px;
+}
+
+.nav-button:hover {
+    background-color: lightblue;
+    color: var(--txt-light);
 }
 
 /* Light &  Mode Navbar */
@@ -69,4 +79,51 @@ html, body {
     background-color: var(--prm-dark);
     color: var(--txt-light);
     font-family: var(--font-prm);
+}
+
+.heading {
+    width: 100%;
+    padding-left: 5%;
+    padding-top: 7%;
+}
+
+.title {
+    font-family: var(--font-prm);
+    font-weight: 700;
+    font-size: 100px;
+}
+
+.heading-body {
+    font-family: var(--font-scnd);
+    font-size: 25px;
+    font-weight: 300;
+}
+
+.bulleted-list {
+    padding-left: 5%;
+    width: 40%;
+    font-family: var(--font-scnd);
+}
+
+.step {
+    display: flex;
+    align-items: center; /* Align items vertically */
+    gap: 15px; /* Space between number and text */
+}
+
+.step-number {
+    font-weight: 900px;
+    font-size: 30px;
+    color: var(--ac-light);
+    align-items: top;
+}
+
+.step-content {
+    display: flex;
+    flex-direction: column;
+    font-weight: 300;
+}
+
+.step-content h1 {
+    margin: 0;
 }

@@ -6,9 +6,12 @@
     <title>Waystra - AI Travel Planner</title>
     <link rel="stylesheet" href="./style.css">
 
+    <!-- Bootstrap-->
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"> -->
+
     <!-- Font Import -->
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
 </head>
 <body class="light-mode">
@@ -16,14 +19,54 @@
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ NAV BAR ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <div class="nav-bar">
         <img src="./imgs/Waystra_Logo.png" alt="Waystra" width="110px" height="100%"> 
-        <button class="nav-button" id="home-button">Home</button>
-        <button class="nav-button" id="plan-button">Plan</button>
-        <button class="nav-button" id="dashboard-button">Dashboard</button>
+        <button class="nav-button" id="home-button" onclick="showHome()">Home</button>
+        <button class="nav-button" id="plan-button" onclick="showPlan()">Plan</button>
+        <button class="nav-button" id="dashboard-button" onclick="showDashboard()">Dashboard</button>
     </div>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ BODY ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <div class="body">
-        Page Content
+
+        <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ HEADING ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+        <div class="heading">
+            <div class="title">
+                Waystra
+            </div>
+            <div class="heading-body">
+                Find your way quickly and easily with our AI powered travel assistance.
+            </div>
+        </div>
+        <row>
+
+            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ BULLET LIST ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+            <div class="bulleted-list">
+                <div class="step">
+                    <span class="step-number"><h1>1</h1></span>
+                    <div class="step-content">
+                        <h1>Browse Destinations</h1>
+                    </div>
+                    <div>
+                        • Search for destinations
+                    </div>
+
+                </div>
+                <div class="step">
+                    <span class="step-number"><h1>2</h1></span>
+                    <div class="step-content">
+                        <h1>Plan your route</h1>
+                    </div>
+                </div>
+                <div class="step">
+                    <span class="step-number"><h1>3</h1></span>
+                        <div class="step-content">
+                        <h1>Travel with ease :)</h1>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ BULLET LIST IMAGES ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+            
+        </row>
     </div>
 
 </body>
