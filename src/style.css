@@ -1,0 +1,72 @@
+:root {
+    /* Light Mode Colors */
+    --txt-light: #2D2D2D; /* Dark text for light mode */
+    --bg-light: #F5F9FC;
+    --prm-light: #0077B6;
+    --scnd-light: #48CAE4;
+    --ac-light: #FF6B6B;
+    
+    /* Dark Mode Colors */
+    --txt-dark: #E0E0E0; /* Light text for dark mode */
+    --bg-dark: #1A1A2E;
+    --prm-dark: #0F3460;
+    --scnd-dark: #00ADB5;
+    --ac-dark: #FF2E63;
+    
+    /* Shared Styles */
+    --font-prm: 'Rajdhani';
+    --font-scnd: 'Poppins';
+}
+
+/* Light Mode */
+.light-mode {
+    color: var(--txt-light);
+    background-color: var(--bg-light);
+}
+
+/* Dark Mode */
+.dark-mode {
+    color: var(--txt-dark);
+    background-color: var(--bg-dark);
+}
+
+/* Ensure HTML & Body Cover Full Height */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* Navbar Styles */
+.nav-bar {
+    height: 80px;
+    background-color: var(--bg-light);
+    border-width: 10px;
+    border-color: var(--prm-light);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.nav-button {
+    height: 100%;
+    background-color: var(--bg-light);
+    font-family: var(--font-scnd);
+    font-weight: 300;
+    font-size: 23px;
+    margin: 20px;
+    border: none;
+}
+
+/* Light &  Mode Navbar */
+.light-mode .nav-bar {
+    background-color: var(--bg-light);
+    color: var(--txt-light);
+    border: 1px, solid, var(--prm-light);
+}
+
+.dark-mode .nav-bar {
+    background-color: var(--prm-dark);
+    color: var(--txt-light);
+    font-family: var(--font-prm);
+}
