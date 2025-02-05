@@ -11,23 +11,47 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 
     <!-- Font Imports -->
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap"
-        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+    <!-- JavaScript Files -->
+    <script src="./script.js" defer></script>
 </head>
 
 <body class="light-mode">
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ WAVE BACKGROUND ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <div class="wave-background">
+        <svg class="wave wave1" viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg">
+            <path fill="var(--ac-light)" fill-opacity="0.1"
+                d="M0,160L60,165.3C120,171,240,181,360,202.7C480,224,600,256,720,234.7C840,213,960,139,1080,128C1200,117,1320,171,1380,197.3L1440,224V320H0Z">
+            </path>
+        </svg>
+        <svg class="wave wave2" viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg">
+            <path fill="var(--ac-light)" fill-opacity="0.07"
+                d="M0,256L48,250.7C96,245,192,235,288,240C384,245,480,267,576,277.3C672,288,768,288,864,256C960,224,1056,160,1152,122.7C1248,85,1344,75,1392,69.3L1440,64V320H0Z">
+            </path>
+        </svg>
+        <svg class="wave wave3" viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg">
+            <path fill="var(--ac-light)" fill-opacity="0.05"
+                d="M0,320L60,304C120,288,240,256,360,213.3C480,171,600,117,720,122.7C840,128,960,192,1080,218.7C1200,245,1320,235,1380,229.3L1440,224V320H0Z">
+            </path>
+        </svg>
+    </div>
+
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ NAV BAR ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <div class="nav-bar">
         <img src="./imgs/Waystra_Logo.png" alt="Waystra" width="5%" height="100%" />
-        <button class="nav-button" id="home-button" onclick="showHome()">Home</button>
-        <button class="nav-button" id="plan-button" onclick="showPlan()">Plan</button>
-        <button class="nav-button" id="dashboard-button" onclick="showDashboard()">Dashboard</button>
+        <button class="nav-button" id="home-button">Home</button>
+        <button class="nav-button" id="plan-button">Plan</button>
+        <button class="nav-button" id="dashboard-button">Dashboard</button>
+        
+        <!-- Dark Mode Toggle Button -->
+        <button class="toggle-mode" id="toggle-mode" onclick="toggleDarkMode()">⚫️</button>
     </div>
 
-    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ BODY ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-    <div class="body">
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ CONTENT - HOME ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <div class="content" id="home">
         <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ HEADING ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
         <div class="heading">
             <div class="title">Waystra</div>
@@ -66,10 +90,31 @@
             </div>
 
             <div class="bulleted-list-graphic">
-                
+                <div class="bullet-graphic">
+                    <img src="./imgs/Number_1.avif" id="bullet-1">
+                </div>
+                <div class="bullet-graphic">
+                    <img src="./imgs/Number_2.jpg" id="bullet-2">
+                </div>
+                <div class="bullet-graphic">
+                    <img src="./imgs/Number_3.jpg" id="bullet-3">
+                </div>
             </div>
-        </div>
             
+            
+        </div>
+    </div>
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ CONTENT - PLAN ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <div class="content" id="plan" style="display: none;">
+        <h1>Plan Page</h1>
+        <p>Plan your trip here.</p>
+    </div>
+    
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ CONTENT - DASHBOARD ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <div class="content" id="dashboard" style="display: none;">
+        <h1>Dashboard</h1>
+        <p>View your saved plans here.</p>
     </div>
 </body>
 
