@@ -1,3 +1,7 @@
+/* ====================================================
+    UNIVERSAL STYLES (Global Variables, Light/Dark Mode)
+======================================================= */
+
 :root {
     /* Light & Dark Mode Colors - OPTION 1*/
     --txt-light: #2D2D2D;
@@ -77,6 +81,12 @@ body {
     transition: background-color 0.1s ease-in-out, color 0.1s ease-in-out;
 }
 
+
+
+/* ====================================================
+    NAVIGATION BAR STYLES (Common Across Pages)
+======================================================= */
+
 /* Navbar Styles */
 .nav-bar {
     width: 100%;
@@ -132,6 +142,7 @@ body {
 .nav-button.active {
     color: var(--bg-light);
 }
+
 .dark-mode .nav-button.active {
     color: var(--bg-dark);
 }
@@ -150,14 +161,21 @@ body {
     color: var(--ac-dark);
 }
 
+
+
+/* ====================================================
+    HOME PAGE STYLES
+======================================================= */
+
+
 /* Heading Styles */
-.heading {
+#home .heading {
     width: 100%;
     padding-left: 5%;
     padding-top: 7%;
 }
 
-.title {
+#home .title {
     font-family: var(--font-prm);
     font-weight: 700;
     font-size: 100px;
@@ -165,11 +183,11 @@ body {
     transition: color 0.1s ease-in-out;
 }
 
-.dark-mode .title {
+.dark-mode #home .title {
     color: var(--prm-dark);
 }
 
-.heading-body {
+#home .heading-body {
     font-family: var(--font-scnd);
     font-size: 25px;
     font-weight: 300;
@@ -177,11 +195,11 @@ body {
     transition: color 0.1s ease-in-out;
 }
 
-.dark-mode .heading-body {
+.dark-mode #home .heading-body {
     color: var(--txt-dark);
 }
 
-/* Bulleted List & Step Styles */
+/* Steps section */
 .bulleted-list {
     width: 40%;
     font-family: var(--font-scnd);
@@ -237,6 +255,7 @@ body {
     color: var(--txt-dark);
 }
 
+/* Bullet Graphic Section */
 .bulleted-list-graphic {
     width: 70%;
     display: flex;
@@ -272,7 +291,6 @@ body {
     border-radius: 10px;
 }
 
-
 /* Container for Steps and Graphics */
 .container {
     margin: 50px;
@@ -286,7 +304,51 @@ body {
     border-radius: 10px;
 }
 
-/* WAVE BACKGROUND */
+
+
+/* ====================================================
+    PLAN PAGE STYLES
+======================================================= */
+
+#plan {
+    text-align: center;
+    padding: 80px 5%;
+}
+
+#plan h1 {
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--prm-light);
+}
+
+.dark-mode #plan h1 {
+    color: var(--prm-dark);
+}
+
+/* ====================================================
+    DASHBOARD PAGE STYLES
+======================================================= */
+
+#dashboard {
+    text-align: center;
+    padding: 80px 5%;
+}
+
+#dashboard h1 {
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--prm-light);
+}
+
+.dark-mode #dashboard h1 {
+    color: var(--prm-dark);
+}
+
+
+/* ====================================================
+    WAVE BACKGROUND STYLES (Applies to All Pages)
+======================================================= */
+
 .wave-background {
     position: fixed;
     top: 0;
