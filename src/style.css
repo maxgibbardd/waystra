@@ -163,6 +163,43 @@ body {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* ====================================================
     HOME PAGE STYLES
 ======================================================= */
@@ -298,11 +335,42 @@ body {
     gap: 20px;
 }
 
-.search-and-select {
-    border: 1px solid black;
-    height: 100%;
-    border-radius: 10px;
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -310,20 +378,84 @@ body {
     PLAN PAGE STYLES
 ======================================================= */
 
-#plan {
-    text-align: center;
-    padding: 80px 5%;
+#plan .content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
-#plan h1 {
-    font-size: 48px;
-    font-weight: 700;
-    color: var(--prm-light);
+/* Adjust row alignment to fit inside the white area */
+#plan .row {
+    display: flex;
+    align-items: center;
+    padding-top: 7%;
+    padding-left: 5%;
+    padding-right: 5%;
+    max-width: 100%;
+    height: 100%;
 }
 
-.dark-mode #plan h1 {
-    color: var(--prm-dark);
+/* Search & Select Box Fix */
+.search-and-select {
+    border: 1px solid black;
+    border-radius: 10px;
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-light);
 }
+
+.dark-mode .search-and-select {
+    background-color: var(--bg-dark);
+}
+
+/* Search & Select Box Fix */
+.information {
+    border: 1px solid red;
+    border-radius: 10px;
+    width: 100%;
+    height: 100%;
+}
+
+.search {
+    height: 30px;
+}
+
+.select {
+    height: 100%;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* ====================================================
     DASHBOARD PAGE STYLES
