@@ -61,19 +61,18 @@ const Hero = () => {
             <ImagesColumn>
               <ImageRow>
                 <ImageContainer>
-                  Image 1
+                  {/* <img src='/Number_1.avif'></img> */}
                 </ImageContainer>
               </ImageRow>
               <ImageRow>
                 <ImageContainer>
-                  Image 2
+                  {/* <img src='/Number_2.jpg'></img> */}
                 </ImageContainer>
               </ImageRow>
               <ImageRow>
                 <ImageContainer>
-                  Image 3
+                  {/* <img src='/Number_3.jpg'></img> */}
                 </ImageContainer>
-
               </ImageRow>
             </ImagesColumn>
           </BulletsAndImages>
@@ -204,35 +203,47 @@ flex: 3;
 padding: 10px;
 border-radius: 10px;
 border: 1px solid black;
+display: flex
 `
 
 const ImageRow = styled.div`
-  width: 100%;
-  padding: 10px;
+  height: 100%;
   border-radius: 10px;
   border: 1px solid black;
   display: flex;
   
   &:nth-child(1) {
+    flex: 1;
     justify-content: flex-start;
   }
 
   &:nth-child(2) {
+    flex: 1;
     justify-content: center;
   }
 
   &:nth-child(3) {
+    flex: 1;
     justify-content: flex-end;
   }
 `;
 
-
-
 const ImageContainer = styled.div`
+width: 100%;
 border-radius: 10px;
-border: 1px solid black;
-width: 33%;
-`
+border: 1px solid var(--prm-light);
+display: flex;
+align-items: center;
+justify-content: center;
+overflow: hidden;
+
+img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+`;
+
 
 
 

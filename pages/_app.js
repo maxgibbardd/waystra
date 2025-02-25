@@ -60,7 +60,7 @@ export default function App({ Component, pageProps }) {
           <link rel="icon" type="image/png" sizes="16x16" href="/favicon_package/favicon-16x16.png"/>
           <link rel="manifest" href="/favicon_package/site.webmanifest"/><link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
-          <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&family=Rajdhani:wght@400;500;700&display=swap" rel="stylesheet" />
+          <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&family=Rajdhani:wght@400;500;700&display=swap"/>
           <meta name="msapplication-TileColor" content="#da532c"/>
           <meta name="theme-color" content="#ffffff"/>
         </Head>
