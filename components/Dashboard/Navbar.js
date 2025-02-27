@@ -48,7 +48,7 @@ const Nav = styled.nav`
   width: 100%;
   height: 55px;
   background-color: var(--prm-light);
-  border-bottom: 3px solid var(--scnd-light);
+  // border-bottom: 3px solid var(--scnd-light);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -59,7 +59,7 @@ const Nav = styled.nav`
 
   &.dark-mode {
     background-color: var(--prm-dark);
-    border-bottom: 3px solid var(--scnd-dark);
+    // border-bottom: 3px solid var(--scnd-dark);
   }
 `;
 
@@ -69,10 +69,19 @@ const NavButton = styled.button`
   border: none;
   color: var(--txt-dark);
   cursor: pointer;
-  transition: color 0.3s ease-in-out;
+  // transition: color 0.3s ease-in-out;
+  padding: 10px;
+  border-radius: 10px;
 
   &:hover {
-    text-decoration: underline;
+    // text-decoration: underline;
+    background-color: var(--bg-light);
+    color: var(--txt-light);
+  }
+
+  &.dark-mode &:hover {
+    // text-decoration: underline;
+    background-color: var(--bg-dark);
     color: var(--txt-dark);
   }
 `;

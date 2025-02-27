@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import { StateContext } from "@/context/StateContext"
 import { createGlobalStyle } from 'styled-components'
+import { AuthProvider } from "@/backend/Auth";
 
 export const GlobalStyle = createGlobalStyle`
   * 
@@ -67,8 +68,11 @@ export default function App({ Component, pageProps }) {
 
       <GlobalStyle />
 
+      
       <StateContext>
-        <Component {...pageProps} />
+        <AuthProvider>
+          <Component {...pageProps} />
+        </AuthProvider>
       </StateContext>
     </>
   )
