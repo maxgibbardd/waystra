@@ -35,6 +35,7 @@ export default function Plan() {
       <Navbar />
       <PlanContainer>
         <Sidebar style={{ width: `${sidebarWidth}px` }}>
+        
           <SearchInput placeholder="Search..." />
           <DestinationList></DestinationList>
         </Sidebar>
@@ -128,28 +129,25 @@ const TabContainer = styled.div`
   display: flex;
   padding-left: 100px;
   padding-right: 100px;
-  border: 2px solid #ccc;
+  border: 1px solid var(--bg-dark);
   border-radius: 50px;
   width: 60%;
   margin-left: 20%;
   margin-right: 20%;
   justify-content: space-between;
-  background-color: var(--prm-light);
 `;
 
 const Tab = styled.button`
   padding: 8px 16px;
   margin: 3px;
-  border: none;
   border-radius: 50px;
-  background-color: var(--prm-light);
-//   box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  border: none;
+  background-color: transparent;
   cursor: pointer;
   color: var(--txt-light);
   font-weight: 600;
   outline: none;
   transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
-//   border: 2px dashed black;
 
   &:hover {
     background-color: var(--scnd-light);
