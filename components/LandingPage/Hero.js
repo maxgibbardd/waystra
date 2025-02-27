@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import Image from 'next/image'
 
 const Hero = () => {
   return (
@@ -61,17 +62,17 @@ const Hero = () => {
             <ImagesColumn>
               <ImageRow>
                 <ImageContainer>
-                  {/* <img src='/Number_1.avif'></img> */}
+                  <StyledImage src="/Browse.webp" width={300} height={300} alt="Browse" />
                 </ImageContainer>
               </ImageRow>
               <ImageRow>
                 <ImageContainer>
-                  {/* <img src='/Number_2.jpg'></img> */}
+                  <StyledImage src="/Plan.webp" width={300} height={300} alt="Plan" />
                 </ImageContainer>
               </ImageRow>
               <ImageRow>
                 <ImageContainer>
-                  {/* <img src='/Number_3.jpg'></img> */}
+                  <StyledImage src="/Travel.webp" width={300} height={300} alt="Travel" />
                 </ImageContainer>
               </ImageRow>
             </ImagesColumn>
@@ -142,11 +143,11 @@ border-radius: 10px;
 
 /* BULLETS */
 const BulletColumn = styled.div`
-flex: 2;
+flex: 1;
 padding: 10px;
 padding-left: 50px;
 border-radius: 10px;
-// border: 1px solid indigo;
+// border: 1px dashed indigo;
 font-family: var(--font-scnd);
 `
 
@@ -199,50 +200,50 @@ padding: 5px 10px;
 
 /* IMAGES */
 const ImagesColumn = styled.div`
-flex: 3;
-padding: 10px;
-border-radius: 10px;
-border: 1px solid black;
-display: flex
-`
+  flex: 3;
+  padding: 10px;
+  border-radius: 10px;
+  // border: 1px dashed black;
+  display: flex;
+  // flex-direction: column;
+  gap: 10px;
+`;
 
 const ImageRow = styled.div`
-  height: 100%;
-  border-radius: 10px;
-  border: 1px solid black;
   display: flex;
-  
+  justify-content: center;
+  width: 100%;
+
   &:nth-child(1) {
-    flex: 1;
-    justify-content: flex-start;
+    align-items: start;
   }
 
   &:nth-child(2) {
-    flex: 1;
-    justify-content: center;
+    align-items: center;
   }
 
   &:nth-child(3) {
-    flex: 1;
-    justify-content: flex-end;
+    align-items: end;
   }
 `;
 
 const ImageContainer = styled.div`
-width: 100%;
-border-radius: 10px;
-border: 1px solid var(--prm-light);
-display: flex;
-align-items: center;
-justify-content: center;
-overflow: hidden;
+  width: 80%;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  border: 1px solid var(--prm-light);
+  overflow: hidden;
+`;
 
-img {
+const StyledImage = styled(Image)`
   width: 100%;
   height: 100%;
-  object-fit: cover;
-}
+  object-fit: cover; /* Ensures the image fills the container */
 `;
+
 
 
 
