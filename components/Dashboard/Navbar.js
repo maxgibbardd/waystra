@@ -24,7 +24,8 @@ const Navbar = () => {
       <Link href="/"><NavButton>Home</NavButton></Link>
       <Link href="/plan"><NavButton>Plan</NavButton></Link>
       <Link href="/dashboard"><NavButton>Dashboard</NavButton></Link>
-      <NavButton onClick={toggleDarkMode} id="toggle">{darkMode ? '⚪️' : '⚫️'}</NavButton>
+      <button onClick={toggleDarkMode} id="toggle">{darkMode ? '⚪️' : '⚫️'}</button>
+      {/* <NavButton onClick={logOut}>Logout</NavButton> */}
     </Nav>
   );
 };
@@ -69,7 +70,7 @@ const NavButton = styled.button`
   border: none;
   color: var(--txt-dark);
   cursor: pointer;
-  // transition: color 0.3s ease-in-out;
+  transition: color 0.3s ease-in-out;
   padding: 10px;
   border-radius: 10px;
 
