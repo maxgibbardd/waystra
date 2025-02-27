@@ -4,15 +4,7 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { getAuth } from "firebase/auth";
 
-const firebaseConfig = process.env.NODE_ENV === 'production' ? {
-    apiKey: "",
-    authDomain: "",
-    projectId: "",
-    storageBucket: "",
-    messagingSenderId: "",
-    appId: "",
-    measurementId: ""
-} : {
+const firebaseConfig = {
     apiKey: "AIzaSyAHJ4uLW4WbpBZM6OyXtjCT0yrO11MkLQM",
     authDomain: "waystra-ai.firebaseapp.com",
     projectId: "waystra-ai",
