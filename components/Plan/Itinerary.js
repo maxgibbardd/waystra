@@ -68,11 +68,7 @@ const Display = styled.div`
   flex-direction: column;
 `;
 
-/**
- * 1) We use a container with `overflow-y: auto;` and a fixed/max height.
- * 2) The table is `display: table;` so columns line up correctly.
- * 3) The thead and tfoot use `position: sticky` so they stay pinned.
- */
+/* TABLE CONTENTS */
 const TableContainer = styled.div`
   /* Adjust height as needed */
   max-height: 75vh;
@@ -128,14 +124,13 @@ const TableFooter = styled.tfoot`
   font-size: 20px;
   border-top: 1px solid var(--prm-light);
   color: var(--ac-light);
-
-  /* Keep the footer pinned at the bottom within the scrollable container */
   position: sticky;
   bottom: 0;
   z-index: 2;
   background-color: #f8f8f8;
   border-radius: 10px;
 `;
+
 
 const FooterCol = styled.td`
   padding: 10px;
