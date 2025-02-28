@@ -7,8 +7,8 @@ import Sidebar from "@/components/Plan/Sidebar";
 
 export default function Plan() {
   // Default to the Itinerary tab for this example.
-  const [activeTab, setActiveTab] = useState("Itinerary");
-  const [selections, setSelections] = useState([]); // Store selected locations
+  const [activeTab, setActiveTab] = useState("Itinerary");  // 
+  const [selections, setSelections] = useState([]);         // stores selected locations displayed on the itinerary tab
 
   // Add a selected location with a default duration of 1 day
   const addSelection = (location) => {
