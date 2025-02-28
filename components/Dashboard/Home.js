@@ -1,7 +1,7 @@
-import React from 'react';
-import Link  from 'next/link';
-import { IoMdHome } from 'react-icons/io'; // Importing a home icon from react-icons
-import styled from 'styled-components';
+import React from "react";
+import Link from "next/link";
+import { IoMdHome } from "react-icons/io"; // Importing a home icon from react-icons
+import styled from "styled-components";
 
 const Home = () => {
   return (
@@ -21,7 +21,7 @@ const Square = styled(Link)`
   color: white;
   border-radius: 4px; // Adjust for square or rounded corners
   text-decoration: none;
-  
+
   svg {
     width: 24px; // Adjust icon size as needed
     height: 24px; // Adjust icon size as needed
