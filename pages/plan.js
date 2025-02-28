@@ -1,163 +1,164 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import Navbar from "@/components/Dashboard/Navbar";
-import { useStateContext } from '@/context/StateContext'
-import { getAllUserPhotos } from '@/backend/Database'
-import { useAuth } from "@/backend/Auth";
-import { useRouter } from "next/router";
-import Head from "next/head";
+import Cost from "@/components/Plan/Itinerary";
+import Route from "@/components/Plan/Route";
+import Sidebar from "@/components/Plan/Sidebar";
 
 export default function Plan() {
-  const [sidebarWidth, setSidebarWidth] = useState(300); // Default sidebar width
-  const [isResizing, setIsResizing] = useState(false);
+    const [activeTab, setActiveTab] = useState("Cost");
+    const [selections, setSelections] = useState([]); // Store selected locations
 
-  const handleMouseDown = (e) => {
-    setIsResizing(true);
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
-  };
+    // Function to add selected locations
+    const addSelection = (location) => {
+        setSelections((prevSelections) => [...prevSelections, location]);
+    };
 
-  const handleMouseMove = (e) => {
-    if (isResizing) {
-      const newWidth = Math.max(220, e.clientX); // Prevent sidebar from becoming too small
-      setSidebarWidth(newWidth);
-    }
-  };
+    // Function to render the correct component
+    const renderContent = () => {
+        switch (activeTab) {
+            case "Cost":
+                return <Cost />;
+            case "Route":
+                return <Route />;
+            case "Itinerary":
+                return <Itinerary />;
+            default:
+                return <Cost />;
+        }
+    };
 
-  const handleMouseUp = () => {
-    setIsResizing(false);
-    document.removeEventListener("mousemove", handleMouseMove);
-    document.removeEventListener("mouseup", handleMouseUp);
-  };
-
-  return (
-    <Section>
-      <Navbar />
-      <PlanContainer>
-        <Sidebar style={{ width: `${sidebarWidth}px` }}>
-        
-          <SearchInput placeholder="Search..." />
-          <DestinationList></DestinationList>
-        </Sidebar>
-
-        <ResizeHandle onMouseDown={handleMouseDown} />
-
-        <MainContent>
-          <TabContainer>
-            <Tab>Cost</Tab>
-            <Tab>Route</Tab>
-            <Tab>Itinerary</Tab>
-          </TabContainer>
-          <ContentArea>{/* Put your main content here */}</ContentArea>
-        </MainContent>
-      </PlanContainer>
-    </Section>
-  );
+    return (
+        <Section>
+            <Navbar />
+            <PlanContainer>
+                <Sidebar addSelection={addSelection} />
+                <MainContent>
+                    <TabContainer>
+                        <Tab 
+                            className={activeTab === "Cost" ? "active" : ""}
+                            onClick={() => setActiveTab("Cost")}
+                        >
+                            Cost
+                        </Tab>
+                        <Tab 
+                            className={activeTab === "Route" ? "active" : ""}
+                            onClick={() => setActiveTab("Route")}
+                        >
+                            Route
+                        </Tab>
+                        <Tab 
+                            className={activeTab === "Itinerary" ? "active" : ""}
+                            onClick={() => setActiveTab("Itinerary")}
+                        >
+                            Itinerary
+                        </Tab>
+                    </TabContainer>
+                    <ContentArea>
+                        {renderContent()}
+                        <SelectionTable selections={selections} />
+                    </ContentArea>
+                </MainContent>
+            </PlanContainer>
+        </Section>
+    );
 }
 
-// ~~~~~~~~~~~~~ STYLED COMPONENTS ~~~~~~~~~~~~~
+// Selection Table Component
+const SelectionTable = ({ selections }) => {
+    return (
+        <Table>
+            <thead>
+                <tr>
+                    <th>Location</th>
+                </tr>
+            </thead>
+            <tbody>
+                {selections.map((location, index) => (
+                    <tr key={index}>
+                        <td>{location.place_name}</td>
+                    </tr>
+                ))}
+            </tbody>
+        </Table>
+    );
+};
 
+// Styled Components
 const Section = styled.section`
-  width: 100%;
-  height: 100vh;
-  padding-top: 55px;
-  display: flex;
-  border: 2px dashed black;
+    width: 100%;
+    height: 100vh;
+    padding-top: 55px;
+    display: flex;
 `;
 
 const PlanContainer = styled.div`
-  display: flex;
-  height: 100%;
-  width: 100%;
-  border: 2px dashed red;
-`;
-
-const Sidebar = styled.div`
-  min-width: 25%;
-  //   background-color: #f0f0f0;
-  padding: 20px;
-  overflow: hidden;
-  border-right: 2px solid #ccc;
-  border: 2px dashed black;
-`;
-
-const ResizeHandle = styled.div`
-  width: 5px;
-  cursor: ew-resize;
-  background-color: #ccc;
-  transition: background 0.2s;
-
-  &:hover {
-    background-color: var(--bg-scnd);
-  }
-`;
-
-const SearchInput = styled.input`
-  width: 100%;
-  padding: 8px;
-  border-radius: 8px;
-  border: 2px solid #ccc;
-  margin-bottom: 20px;
-  font-size: 14px;
-  outline: none;
-  background-color: transparent;
-  color: var(--prm-light);
-
-  &::placeholder {
-    color: var(--prm-light);
-  }
-
-  &.dark-mode {
-    // background-color: var(--bg-dark);
-  }
-`;
-
-const DestinationList = styled.ul`
-  list-style-type: disc;
-  padding-left: 20px;
+    display: flex;
+    height: 100%;
+    width: 100%;
 `;
 
 const MainContent = styled.div`
-  flex: 1;
-  min-width: 25%;
-  padding: 20px;
-  border: 2px dashed green;
-  justify-content: center;
+    flex: 1;
+    min-width: 25%;
+    padding: 20px;
+    justify-content: center;
 `;
 
 const TabContainer = styled.div`
-  display: flex;
-  padding-left: 100px;
-  padding-right: 100px;
-  border: 1px solid var(--bg-dark);
-  border-radius: 50px;
-  width: 60%;
-  margin-left: 20%;
-  margin-right: 20%;
-  justify-content: space-between;
+    display: flex;
+    padding-left: 100px;
+    padding-right: 100px;
+    border: 1px solid var(--bg-dark);
+    border-radius: 50px;
+    width: 60%;
+    margin-left: 20%;
+    margin-right: 20%;
+    justify-content: space-between;
 `;
 
 const Tab = styled.button`
-  padding: 8px 16px;
-  margin: 3px;
-  border-radius: 50px;
-  border: none;
-  background-color: transparent;
-  cursor: pointer;
-  color: var(--txt-light);
-  font-weight: 600;
-  outline: none;
-  transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
+    padding: 8px 16px;
+    margin: 3px;
+    border-radius: 50px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    color: var(--txt-light);
+    font-size: 20px;
+    font-weight: 300;
+    font-family: var(--font-prm);
+    outline: none;
+    transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
 
-  &:hover {
-    background-color: var(--scnd-light);
-  }
+    &:hover {
+        background-color: var(--scnd-light);
+    }
+
+    &.active {
+        background-color: var(--scnd-light);
+    }
 `;
 
 const ContentArea = styled.div`
-  margin-top: 20px;
-  margin-bottom: 20px;
-//   height: 90%;
-  border: 2px dashed black;
-  flex: 1;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    height: 90%;
+    flex: 1;
+`;
+
+const Table = styled.table`
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f4f4f4;
+    }
 `;

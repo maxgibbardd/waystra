@@ -67,6 +67,8 @@ const Nav = styled.nav`
 const NavButton = styled.button`
   background: transparent;
   font-size: 18px;
+  font-family: var(--font-prm);
+  font-weight: 500;
   border: none;
   color: var(--txt-dark);
   cursor: pointer;
