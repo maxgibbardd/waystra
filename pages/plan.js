@@ -5,12 +5,10 @@ import Itinerary from "@/components/Plan/Itinerary";
 import Route from "@/components/Plan/Route";
 import Sidebar from "@/components/Plan/Sidebar";
 
-export default function Plan() {
-  // Default to the Itinerary tab for this example.
-  const [activeTab, setActiveTab] = useState("Itinerary");  // 
-  const [selections, setSelections] = useState([]);         // stores selected locations displayed on the itinerary tab
+export default function Plan({ isLoaded }) {
+  const [activeTab, setActiveTab] = useState("Itinerary");
+  const [selections, setSelections] = useState([]);
 
-  // Add a selected location with a default duration of 1 day
   const addSelection = (location) => {
     setSelections((prevSelections) => [
       ...prevSelections,
@@ -18,7 +16,6 @@ export default function Plan() {
     ]);
   };
 
-  // Update the duration for a given location
   const updateDuration = (index, newDuration) => {
     setSelections((prevSelections) => {
       const updated = [...prevSelections];
@@ -27,14 +24,28 @@ export default function Plan() {
     });
   };
 
-  // Remove a location from the itinerary
   const removeLocation = (index) => {
     setSelections((prevSelections) =>
       prevSelections.filter((_, i) => i !== index)
     );
   };
 
-  // Render the active tab content.
+  const handleSave = () => {
+    // Load existing saved trips from localStorage
+    const savedTrips = JSON.parse(localStorage.getItem("savedTrips")) || [];
+
+    // Create a new “trip” object
+    const newTrip = {
+      selections,
+      savedAt: new Date().toLocaleString(), // Or however you’d like to label it
+    };
+
+    // Save to localStorage
+    savedTrips.push(newTrip);
+    localStorage.setItem("savedTrips", JSON.stringify(savedTrips));
+    alert("Trip saved!");
+  };
+
   const renderContent = () => {
     switch (activeTab) {
       case "Itinerary":
@@ -46,7 +57,7 @@ export default function Plan() {
           />
         );
       case "Route":
-        return <Route />;
+        return <Route selections={selections} isLoaded={isLoaded} />;
       default:
         return (
           <Itinerary
@@ -65,18 +76,24 @@ export default function Plan() {
         <Sidebar addSelection={addSelection} />
         <MainContent>
           <TabContainer>
-            <Tab
-              className={activeTab === "Itinerary" ? "active" : ""}
-              onClick={() => setActiveTab("Itinerary")}
-            >
-              Itinerary
-            </Tab>
-            <Tab
-              className={activeTab === "Route" ? "active" : ""}
-              onClick={() => setActiveTab("Route")}
-            >
-              Route
-            </Tab>
+            {/* Flex wrapper for the tabs themselves */}
+            <TabWrapper>
+              <Tab
+                className={activeTab === "Itinerary" ? "active" : ""}
+                onClick={() => setActiveTab("Itinerary")}
+              >
+                Itinerary
+              </Tab>
+              <Tab
+                className={activeTab === "Route" ? "active" : ""}
+                onClick={() => setActiveTab("Route")}
+              >
+                Route
+              </Tab>
+            </TabWrapper>
+
+            {/* Button on the right */}
+            <SaveButton onClick={handleSave}>Save</SaveButton>
           </TabContainer>
           <ContentArea>{renderContent()}</ContentArea>
         </MainContent>
@@ -84,6 +101,8 @@ export default function Plan() {
     </Section>
   );
 }
+
+// STYLED COMPONENTS
 
 const Section = styled.section`
   width: 100%;
@@ -106,13 +125,22 @@ const MainContent = styled.div`
 `;
 
 const TabContainer = styled.div`
+  /* Parent container: let's keep it centered but also allow space for the Save button */
   display: flex;
-  padding: 0 100px;
-  border: 1px solid var(--bg-dark);
-  border-radius: 50px;
+  align-items: center;
   width: 60%;
   margin: 0 auto;
+  border: 1px solid var(--bg-dark);
+  border-radius: 50px;
+  padding: 0 16px;
   justify-content: space-between;
+`;
+
+const TabWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex: 1;
 `;
 
 const Tab = styled.button`
@@ -136,6 +164,17 @@ const Tab = styled.button`
   &.active {
     background-color: var(--scnd-light);
   }
+`;
+
+const SaveButton = styled.button`
+  border: none;
+  border-radius: 50px;
+  padding: 8px 16px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: var(--scnd-light);
+  color: var(--txt-light);
+  font-family: var(--font-prm);
 `;
 
 const ContentArea = styled.div`
