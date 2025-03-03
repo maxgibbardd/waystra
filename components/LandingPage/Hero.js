@@ -88,11 +88,9 @@ const Hero = () => {
 };
 
 const Section = styled.section`
-  height: 94vh;
-  margin-top: 6vh;
-  padding: 10px;
-  border-radius: 10px;
-  // border: 1px solid red;
+  height: 94.5vh;
+  padding: 40px;
+  align-items: center;
 `;
 
 const Overlay = styled.div`

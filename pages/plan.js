@@ -4,8 +4,11 @@ import Navbar from "@/components/Dashboard/Navbar";
 import Itinerary from "@/components/Plan/Itinerary";
 import Route from "@/components/Plan/Route";
 import Sidebar from "@/components/Plan/Sidebar";
+import { useAuth } from "@/backend/Auth";  // Import useAuth for user info
+import { saveTrip } from "@/backend/Database"; // Import your Firestore save function
 
 export default function Plan({ isLoaded }) {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("Itinerary");
   const [selections, setSelections] = useState([]);
 
@@ -15,8 +18,7 @@ export default function Plan({ isLoaded }) {
       return;
     }
   
-    const [lng, lat] = location.geometry.coordinates; // Extract correctly
-  
+    const [lng, lat] = location.geometry.coordinates;
     setSelections((prevSelections) => [
       ...prevSelections,
       {
@@ -27,10 +29,8 @@ export default function Plan({ isLoaded }) {
       },
     ]);
   
-    console.log("Updated selections:", selections); // Debugging
+    console.log("Updated selections:", selections);
   };
-  
-  
 
   const updateDuration = (index, newDuration) => {
     setSelections((prevSelections) => {
@@ -46,16 +46,18 @@ export default function Plan({ isLoaded }) {
     );
   };
 
-  // Example localStorage-based “save” function
-  const handleSave = () => {
-    const savedTrips = JSON.parse(localStorage.getItem("savedTrips")) || [];
-    const newTrip = {
+  // Updated save function to use Firestore
+  const handleSave = async () => {
+    if (!user) {
+      alert("You must be logged in to save a trip!");
+      return;
+    }
+    const tripData = {
       selections,
       savedAt: new Date().toLocaleString(),
     };
-    savedTrips.push(newTrip);
-    localStorage.setItem("savedTrips", JSON.stringify(savedTrips));
-    alert("Trip saved!");
+    await saveTrip(user.uid, tripData);
+    alert("Trip saved to Firestore!");
   };
 
   const renderContent = () => {
@@ -87,12 +89,6 @@ export default function Plan({ isLoaded }) {
       <PlanContainer>
         <Sidebar addSelection={addSelection} />
         <MainContent>
-          {/* Row at the top to place the Save button on the right */}
-          {/* <TopRow>
-            <SaveButton onClick={handleSave}>Save</SaveButton>
-          </TopRow> */}
-
-          {/* Centered Tab Container below it */}
           <TopRow>
             <TabContainer>
               <Tab
@@ -110,7 +106,6 @@ export default function Plan({ isLoaded }) {
             </TabContainer>
             <SaveButton onClick={handleSave}>Save</SaveButton>
           </TopRow>
-
           <ContentArea>{renderContent()}</ContentArea>
         </MainContent>
       </PlanContainer>
