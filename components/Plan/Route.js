@@ -28,7 +28,7 @@ export default function Route({ selections, isLoaded }) {
       <GoogleMap
         center={{ lat: validLocations[0].lat, lng: validLocations[0].lng }}
         zoom={12}
-        mapContainerStyle={{ width: "100%", height: "400px" }}
+        mapContainerStyle={{ width: "100%", height: "70vh" }}
       >
         {validLocations.map((location, index) => (
           <Marker key={index} position={{ lat: location.lat, lng: location.lng }} />
