@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Navbar from "@/components/Dashboard/Navbar";
 import { useAuth } from "@/backend/Auth";
 import { useRouter } from "next/router";
-import { fetchUserTrips, saveTrip, deleteTrip } from "@/backend/Database";
+import { fetchUserTrips, deleteTrip, updateTripAiData } from "@/backend/Database";
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
@@ -11,40 +11,26 @@ export default function Dashboard() {
 
   const [savedTrips, setSavedTrips] = useState([]);
   const [expandedTrips, setExpandedTrips] = useState([]);
-  const [tripAiData, setTripAiData] = useState({});
+  const [loadingStates, setLoadingStates] = useState({});
   const [loadingRegenerate, setLoadingRegenerate] = useState(null);
-  const [loadingStates, setLoadingStates] = useState([]); // Track which trips are loading
 
-  // Load user trips when user logs in
   useEffect(() => {
-    if (user) {
-      loadTrips(user.uid);
-    } else {
+    if (!user) {
       router.push("/auth");
+      return;
     }
+    loadTrips(user.uid);
   }, [user]);
 
-  // Fetch user trips from Firestore
   const loadTrips = async (userId) => {
     const trips = await fetchUserTrips(userId);
     setSavedTrips(trips);
     setExpandedTrips(Array(trips.length).fill(false));
   };
 
-  // 1) Load any previously stored AI data from localStorage
-  useEffect(() => {
-    const storedAiData = JSON.parse(localStorage.getItem("tripAiData")) || {};
-    setTripAiData(storedAiData);
-  }, []);
-
-  // 2) Whenever tripAiData changes, save to localStorage
-  useEffect(() => {
-    localStorage.setItem("tripAiData", JSON.stringify(tripAiData));
-  }, [tripAiData]);
-
   const handleRemove = async (tripId) => {
     await deleteTrip(user.uid, tripId);
-    setSavedTrips((prevTrips) => prevTrips.filter((trip) => trip.id !== tripId));
+    setSavedTrips((prev) => prev.filter((t) => t.id !== tripId));
   };
 
   const handleExpand = async (trip, index) => {
@@ -53,11 +39,9 @@ export default function Dashboard() {
     newExpanded[index] = !currentlyExpanded;
     setExpandedTrips(newExpanded);
 
-    // If AI data already exists or we are collapsing, do nothing
-    if (tripAiData[index] || currentlyExpanded) return;
+    if (currentlyExpanded || (trip.aiData && Object.keys(trip.aiData).length)) return;
 
-    // Mark this trip as loading
-    setLoadingStates((prev) => ({ ...prev, [index]: true }));
+    setLoadingStates((prev) => ({ ...prev, [trip.id]: true }));
 
     try {
       const response = await fetch("/api/generateTripDetails", {
@@ -68,20 +52,25 @@ export default function Dashboard() {
       const result = await response.json();
 
       if (result.success) {
-        setTripAiData((prev) => ({ ...prev, [index]: result.data }));
+        await updateTripAiData(user.uid, trip.id, result.data);
+
+        setSavedTrips((prevTrips) => {
+          const updated = [...prevTrips];
+          updated[index] = { ...updated[index], aiData: result.data };
+          return updated;
+        });
       } else {
         console.error("AI generation error:", result.error);
       }
     } catch (err) {
       console.error("Error calling AI API:", err);
     } finally {
-      // Mark as finished loading
-      setLoadingStates((prev) => ({ ...prev, [index]: false }));
+      setLoadingStates((prev) => ({ ...prev, [trip.id]: false }));
     }
   };
 
   const handleRegenerate = async (trip, index) => {
-    setLoadingRegenerate(index);
+    setLoadingRegenerate(trip.id);
     try {
       const response = await fetch("/api/generateTripDetails", {
         method: "POST",
@@ -91,8 +80,13 @@ export default function Dashboard() {
       const result = await response.json();
 
       if (result.success) {
-        const updatedAiData = { ...tripAiData, [index]: result.data };
-        setTripAiData(updatedAiData);
+        await updateTripAiData(user.uid, trip.id, result.data);
+
+        setSavedTrips((prevTrips) => {
+          const updated = [...prevTrips];
+          updated[index] = { ...updated[index], aiData: result.data };
+          return updated;
+        });
       } else {
         console.error("AI regeneration error:", result.error);
       }
@@ -106,7 +100,6 @@ export default function Dashboard() {
   return user ? (
     <Section>
       <Navbar />
-
       <ContentWrapper>
         <WelcomeMsg>
           Welcome, <span>{user.email}</span>
@@ -122,7 +115,6 @@ export default function Dashboard() {
                 <HeaderCol style={{ width: "10%" }}>Remove</HeaderCol>
               </tr>
             </TableHeader>
-
             <TableBody>
               {savedTrips.map((trip, index) => (
                 <React.Fragment key={trip.id}>
@@ -132,50 +124,48 @@ export default function Dashboard() {
                       <TripCard>
                         {trip.selections.map((loc, i) => (
                           <TripLocation key={i}>
-                            {(i + 1) + ") " + loc.place_name}
+                            {i + 1}) {loc.place_name}
                           </TripLocation>
                         ))}
+
                         <ExpandButton
                           onClick={() => handleExpand(trip, index)}
-                          disabled={loadingStates[index]} // Disable while loading
+                          disabled={loadingStates[trip.id]}
                         >
                           {expandedTrips[index] ? "–" : "+"}
                         </ExpandButton>
                       </TripCard>
 
-                      {/* Collapsible AI details */}
                       {expandedTrips[index] && (
                         <AiDetails>
-                          {loadingStates[index] ? (
+                          {loadingStates[trip.id] ? (
                             <LoadingMessage>Fetching AI details...</LoadingMessage>
-                          ) : tripAiData[index] ? (
+                          ) : trip.aiData && Object.keys(trip.aiData).length ? (
                             <>
                               <Subtitle>Packing Tips</Subtitle>
                               <ul>
-                                {tripAiData[index].packing.map((item, i) => (
+                                {trip.aiData.packing?.map((item, i) => (
                                   <li key={i}>{item}</li>
                                 ))}
                               </ul>
 
                               <Subtitle>Budget Breakdown</Subtitle>
-                              <BudgetBreakdown>
-                                <p><strong>Travel:</strong> ${tripAiData[index].budget[0].travel ?? "0"}</p>
-                                <p><strong>Hotels:</strong> ${tripAiData[index].budget[0].hotels ?? "0"}</p>
-                                <p><strong>Food:</strong> ${tripAiData[index].budget[0].food ?? "0"}</p>
-                                <p><strong>Total:</strong> ${tripAiData[index].budget[0].total ?? "0"}</p>
-                              </BudgetBreakdown>
+                              {trip.aiData.budget && Array.isArray(trip.aiData.budget) && (
+                                <BudgetBreakdown>
+                                  <p><strong>Travel:</strong> ${trip.aiData.budget[0]?.travel ?? 0}</p>
+                                  <p><strong>Hotels:</strong> ${trip.aiData.budget[0]?.hotels ?? 0}</p>
+                                  <p><strong>Food:</strong> ${trip.aiData.budget[0]?.food ?? 0}</p>
+                                  <p><strong>Total:</strong> ${trip.aiData.budget[0]?.total ?? 0}</p>
+                                </BudgetBreakdown>
+                              )}
 
                               <Subtitle>Recommendations</Subtitle>
                               <ul>
-                                {tripAiData[index].recommendations.map((rec, i) => (
+                                {trip.aiData.recommendations?.map((rec, i) => (
                                   <li key={i}>
                                     <strong>{rec.name}</strong> – {rec.description}{" "}
                                     {rec.link && (
-                                      <a
-                                        href={rec.link}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                      >
+                                      <a href={rec.link} target="_blank" rel="noopener noreferrer">
                                         (More Info)
                                       </a>
                                     )}
@@ -183,12 +173,11 @@ export default function Dashboard() {
                                 ))}
                               </ul>
 
-                              {/* Regenerate Button */}
                               <RegenerateButton
                                 onClick={() => handleRegenerate(trip, index)}
-                                disabled={loadingRegenerate === index}
+                                disabled={loadingRegenerate === trip.id}
                               >
-                                {loadingRegenerate === index
+                                {loadingRegenerate === trip.id
                                   ? "Regenerating..."
                                   : "Regenerate Trip Info"}
                               </RegenerateButton>
@@ -199,10 +188,9 @@ export default function Dashboard() {
                         </AiDetails>
                       )}
                     </ContentCol>
+
                     <ContentCol style={{ width: "10%" }}>
-                      <RemoveButton onClick={() => handleRemove(trip.id)}>
-                        ✖
-                      </RemoveButton>
+                      <RemoveButton onClick={() => handleRemove(trip.id)}>✖</RemoveButton>
                     </ContentCol>
                   </ContentRow>
                 </React.Fragment>
