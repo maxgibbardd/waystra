@@ -17,6 +17,7 @@
     "firebaseui": "^6.1.0",
     "mvp-starter": "file:",
     "next": "^13.5.8",
+    "openai": "^4.86.1",
     "react": "^18",
     "react-dom": "^18",
     "react-icons": "^5.0.1",

@@ -9,6 +9,10 @@ export default function Dashboard() {
   const router = useRouter();
   const [savedTrips, setSavedTrips] = useState([]);
 
+  // NEW/UPDATED: Track expansion state per trip and store AI data
+  const [expandedTrips, setExpandedTrips] = useState([]); // array of booleans
+  const [tripAiData, setTripAiData] = useState({});       // { [tripIndex]: { packing, budget, recommendations } }
+
   useEffect(() => {
     if (!user) {
       router.push("/auth");
@@ -19,6 +23,9 @@ export default function Dashboard() {
   useEffect(() => {
     const trips = JSON.parse(localStorage.getItem("savedTrips")) || [];
     setSavedTrips(trips);
+
+    // Initialize expandedTrips state as false for each trip
+    setExpandedTrips(Array(trips.length).fill(false));
   }, []);
 
   // Remove a trip by index
@@ -26,6 +33,46 @@ export default function Dashboard() {
     const updatedTrips = savedTrips.filter((_, i) => i !== index);
     setSavedTrips(updatedTrips);
     localStorage.setItem("savedTrips", JSON.stringify(updatedTrips));
+
+    // Also remove from expansion state + AI data
+    const newExpanded = expandedTrips.filter((_, i) => i !== index);
+    setExpandedTrips(newExpanded);
+
+    const newAiData = { ...tripAiData };
+    delete newAiData[index];
+    setTripAiData(newAiData);
+  };
+
+  // NEW/UPDATED: Handle expand/collapse and fetch AI data if not already fetched
+  const handleExpand = async (trip, index) => {
+    const currentlyExpanded = expandedTrips[index];
+    // Toggle expansion
+    const newExpanded = [...expandedTrips];
+    newExpanded[index] = !currentlyExpanded;
+    setExpandedTrips(newExpanded);
+
+    // If expanding for the first time and no AI data yet, fetch from API
+    if (!currentlyExpanded && !tripAiData[index]) {
+      try {
+        const response = await fetch("/api/generateTripDetails", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ trip }),
+        });
+        const result = await response.json();
+
+        if (result.success) {
+          setTripAiData((prev) => ({
+            ...prev,
+            [index]: result.data, // store { packing, budget, recommendations }
+          }));
+        } else {
+          console.error("AI generation error:", result.error);
+        }
+      } catch (err) {
+        console.error("Error calling AI API:", err);
+      }
+    }
   };
 
   return user ? (
@@ -53,15 +100,78 @@ export default function Dashboard() {
 
             <TableBody>
               {savedTrips.map((trip, index) => (
-                <ContentRow key={index}>
-                  <ContentCol style={{ width: "20%" }}>{trip.savedAt}</ContentCol>
-                  <ContentCol style={{ width: "70%" }}>
-                    {trip.selections.map((loc) => loc.place_name || "Unnamed Location").join(", ")}
-                  </ContentCol>
-                  <ContentCol style={{ width: "10%" }}>
-                    <RemoveButton onClick={() => handleRemove(index)}>Remove</RemoveButton>
-                  </ContentCol>
-                </ContentRow>
+                <React.Fragment key={index}>
+                  <ContentRow>
+                    <ContentCol style={{ width: "20%" }}>
+                      {trip.savedAt}
+                    </ContentCol>
+                    <ContentCol style={{ width: "70%" }}>
+                      <TripCard>
+                        {/* Show the trip's locations */}
+                        {trip.selections
+                          .map((loc) => loc.place_name || "Unnamed Location")
+                          .join(", ")}
+                        {/* NEW/UPDATED: Expand/Collapse Button */}
+                        <ExpandButton
+                          onClick={() => handleExpand(trip, index)}
+                        >
+                          {expandedTrips[index] ? "–" : "+"}
+                        </ExpandButton>
+
+                        {/* NEW/UPDATED: Collapsible AI section */}
+                        {expandedTrips[index] && (
+                          <AiDetails>
+                            {tripAiData[index] ? (
+                              <>
+                                {/* PACKING LIST */}
+                                <Subtitle>Packing Checklist</Subtitle>
+                                <ul>
+                                  {tripAiData[index].packing?.map(
+                                    (item, i) => (
+                                      <li key={i}>{item}</li>
+                                    )
+                                  )}
+                                </ul>
+
+                                {/* BUDGET PLANNER */}
+                                <Subtitle>Budget Planner</Subtitle>
+                                <p>{tripAiData[index].budget}</p>
+
+                                {/* RECOMMENDATIONS */}
+                                <Subtitle>Food & Activities</Subtitle>
+                                {Array.isArray(tripAiData[index].recommendations) &&
+                                  tripAiData[index].recommendations.map((rec, i) => (
+                                    <Recommendation key={i}>
+                                      <strong>{rec.name}</strong> – {rec.description}
+                                      {rec.link && (
+                                        <>
+                                          {" "}
+                                          (<a
+                                            href={rec.link}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                          >
+                                            Details
+                                          </a>)
+                                        </>
+                                      )}
+                                    </Recommendation>
+                                  ))}
+                              </>
+                            ) : (
+                              <p>Loading AI suggestions...</p>
+                            )}
+                          </AiDetails>
+                        )}
+                      </TripCard>
+                    </ContentCol>
+                    <ContentCol style={{ width: "10%" }}>
+                      <RemoveButton onClick={() => handleRemove(index)}>
+                        Remove
+                      </RemoveButton>
+                    </ContentCol>
+                  </ContentRow>
+                </React.Fragment>
               ))}
             </TableBody>
 
@@ -171,9 +281,45 @@ const ContentRow = styled.tr`
   vertical-align: top;
 `;
 
-const ContentCol = styled.td`
+const ContentCol = styled.td``;
+
+/* NEW/UPDATED: Collapsible Card Styles */
+const TripCard = styled.div`
   padding: 10px;
-  vertical-align: top;
+  // border: 1px solid var(--prm-light);
+  margin-bottom: 10px;
+  border-radius: 4px;
+  position: relative;
+`;
+
+const ExpandButton = styled.button`
+  margin-left: 15px;
+  background: none;
+  border: 1px solid var(--prm-light);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 2px 8px;
+  &:hover {
+    background-color: var(--prm-light);
+    color: #fff;
+  }
+`;
+
+const AiDetails = styled.div`
+  margin-top: 10px;
+  padding: 10px;
+  border-top: 1px solid var(--prm-light);
+`;
+
+const Subtitle = styled.h3`
+  margin: 10px 0 5px;
+  font-size: 16px;
+  font-weight: bold;
+`;
+
+const Recommendation = styled.div`
+  margin-bottom: 6px;
 `;
 
 /* FOOTER */

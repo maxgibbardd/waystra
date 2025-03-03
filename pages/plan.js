@@ -88,25 +88,28 @@ export default function Plan({ isLoaded }) {
         <Sidebar addSelection={addSelection} />
         <MainContent>
           {/* Row at the top to place the Save button on the right */}
-          <TopRow>
+          {/* <TopRow>
             <SaveButton onClick={handleSave}>Save</SaveButton>
-          </TopRow>
+          </TopRow> */}
 
           {/* Centered Tab Container below it */}
-          <TabContainer>
-            <Tab
-              className={activeTab === "Itinerary" ? "active" : ""}
-              onClick={() => setActiveTab("Itinerary")}
-            >
-              Itinerary
-            </Tab>
-            <Tab
-              className={activeTab === "Route" ? "active" : ""}
-              onClick={() => setActiveTab("Route")}
-            >
-              Route
-            </Tab>
-          </TabContainer>
+          <TopRow>
+            <TabContainer>
+              <Tab
+                className={activeTab === "Itinerary" ? "active" : ""}
+                onClick={() => setActiveTab("Itinerary")}
+              >
+                Itinerary
+              </Tab>
+              <Tab
+                className={activeTab === "Route" ? "active" : ""}
+                onClick={() => setActiveTab("Route")}
+              >
+                Route
+              </Tab>
+            </TabContainer>
+            <SaveButton onClick={handleSave}>Save</SaveButton>
+          </TopRow>
 
           <ContentArea>{renderContent()}</ContentArea>
         </MainContent>
