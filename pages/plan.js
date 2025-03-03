@@ -10,11 +10,27 @@ export default function Plan({ isLoaded }) {
   const [selections, setSelections] = useState([]);
 
   const addSelection = (location) => {
+    if (!location.geometry || !location.geometry.coordinates) {
+      console.error("Invalid location data:", location);
+      return;
+    }
+  
+    const [lng, lat] = location.geometry.coordinates; // Extract correctly
+  
     setSelections((prevSelections) => [
       ...prevSelections,
-      { ...location, duration: 1 },
+      {
+        place_name: location.place_name || "Unnamed Location",
+        lat,
+        lng,
+        duration: 1,
+      },
     ]);
+  
+    console.log("Updated selections:", selections); // Debugging
   };
+  
+  
 
   const updateDuration = (index, newDuration) => {
     setSelections((prevSelections) => {

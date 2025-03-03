@@ -1,35 +1,39 @@
-import React from "react";
-import { GoogleMap, Polyline } from "@react-google-maps/api";
-
-const containerStyle = {
-  width: "100%",
-  height: "400px",
-};
-
-const defaultCenter = { lat: 0, lng: 0 };
+import React, { useEffect, useState } from "react";
+import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 
 export default function Route({ selections, isLoaded }) {
-  if (!isLoaded) return <div>Loading Map...</div>;
+  const [validLocations, setValidLocations] = useState([]);
 
-  const pathCoordinates = selections.map((location) => ({
-    lat: location.lat,
-    lng: location.lng,
-  }));
+  useEffect(() => {
+    console.log("Route selections:", selections);
+    const filtered = selections.filter(
+      (loc) => loc.lat && loc.lng && !isNaN(loc.lat) && !isNaN(loc.lng)
+    );
 
-  const mapCenter = selections.length > 0 ? pathCoordinates[0] : defaultCenter;
+    if (filtered.length === 0) {
+      console.warn("No valid locations to display.");
+    }
+
+    setValidLocations(filtered);
+  }, [selections]);
+
+  if (!isLoaded) return <div>Loading...</div>;
+
+  if (validLocations.length === 0) {
+    return <div>No valid locations available. Try adding locations to the itinerary.</div>;
+  }
 
   return (
-    <GoogleMap mapContainerStyle={containerStyle} center={mapCenter} zoom={4}>
-      {selections.length > 0 && (
-        <Polyline
-          path={pathCoordinates}
-          options={{
-            strokeColor: "#FF0000",
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
-          }}
-        />
-      )}
-    </GoogleMap>
+    <LoadScript googleMapsApiKey="AIzaSyCM_zt-l_E2RYq37B6QO8oSrm_gGTA_XDE" libraries={["places"]}>
+      <GoogleMap
+        center={{ lat: validLocations[0].lat, lng: validLocations[0].lng }}
+        zoom={12}
+        mapContainerStyle={{ width: "100%", height: "400px" }}
+      >
+        {validLocations.map((location, index) => (
+          <Marker key={index} position={{ lat: location.lat, lng: location.lng }} />
+        ))}
+      </GoogleMap>
+    </LoadScript>
   );
 }
