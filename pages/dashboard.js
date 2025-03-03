@@ -8,10 +8,8 @@ export default function Dashboard() {
   const { user, logout } = useAuth();
   const router = useRouter();
   const [savedTrips, setSavedTrips] = useState([]);
-
-  // NEW/UPDATED: Track expansion state per trip and store AI data
-  const [expandedTrips, setExpandedTrips] = useState([]); // array of booleans
-  const [tripAiData, setTripAiData] = useState({});       // { [tripIndex]: { packing, budget, recommendations } }
+  const [expandedTrips, setExpandedTrips] = useState([]); // Boolean array for collapsible sections
+  const [tripAiData, setTripAiData] = useState({});       // Stores AI-generated data
 
   useEffect(() => {
     if (!user) {
@@ -19,39 +17,43 @@ export default function Dashboard() {
     }
   }, [user, router]);
 
-  // Load trips from localStorage when component mounts
+  // Load trips & AI data from localStorage
   useEffect(() => {
     const trips = JSON.parse(localStorage.getItem("savedTrips")) || [];
     setSavedTrips(trips);
 
-    // Initialize expandedTrips state as false for each trip
+    // Load AI-generated data from localStorage
+    const storedAiData = JSON.parse(localStorage.getItem("tripAiData")) || {};
+    setTripAiData(storedAiData);
+
+    // Initialize collapsed state for trips
     setExpandedTrips(Array(trips.length).fill(false));
   }, []);
 
-  // Remove a trip by index
+  // Remove a trip by index and update localStorage
   const handleRemove = (index) => {
     const updatedTrips = savedTrips.filter((_, i) => i !== index);
     setSavedTrips(updatedTrips);
     localStorage.setItem("savedTrips", JSON.stringify(updatedTrips));
 
-    // Also remove from expansion state + AI data
-    const newExpanded = expandedTrips.filter((_, i) => i !== index);
-    setExpandedTrips(newExpanded);
-
+    // Remove associated AI data
     const newAiData = { ...tripAiData };
     delete newAiData[index];
     setTripAiData(newAiData);
+    localStorage.setItem("tripAiData", JSON.stringify(newAiData));
+
+    // Update expansion state
+    const newExpanded = expandedTrips.filter((_, i) => i !== index);
+    setExpandedTrips(newExpanded);
   };
 
-  // NEW/UPDATED: Handle expand/collapse and fetch AI data if not already fetched
+  // Fetch AI-generated details if they don't exist yet
   const handleExpand = async (trip, index) => {
     const currentlyExpanded = expandedTrips[index];
-    // Toggle expansion
     const newExpanded = [...expandedTrips];
     newExpanded[index] = !currentlyExpanded;
     setExpandedTrips(newExpanded);
 
-    // If expanding for the first time and no AI data yet, fetch from API
     if (!currentlyExpanded && !tripAiData[index]) {
       try {
         const response = await fetch("/api/generateTripDetails", {
@@ -62,10 +64,9 @@ export default function Dashboard() {
         const result = await response.json();
 
         if (result.success) {
-          setTripAiData((prev) => ({
-            ...prev,
-            [index]: result.data, // store { packing, budget, recommendations }
-          }));
+          const updatedAiData = { ...tripAiData, [index]: result.data };
+          setTripAiData(updatedAiData);
+          localStorage.setItem("tripAiData", JSON.stringify(updatedAiData)); // Store AI data persistently
         } else {
           console.error("AI generation error:", result.error);
         }
@@ -78,8 +79,6 @@ export default function Dashboard() {
   return user ? (
     <Section>
       <Navbar />
-
-      {/* Top row for Logout button */}
       <TopRow>
         <LogoutButton onClick={logout}>Logout</LogoutButton>
       </TopRow>
@@ -107,56 +106,41 @@ export default function Dashboard() {
                     </ContentCol>
                     <ContentCol style={{ width: "70%" }}>
                       <TripCard>
-                        {/* Show the trip's locations */}
                         {trip.selections
                           .map((loc) => loc.place_name || "Unnamed Location")
                           .join(", ")}
-                        {/* NEW/UPDATED: Expand/Collapse Button */}
-                        <ExpandButton
-                          onClick={() => handleExpand(trip, index)}
-                        >
+                        <ExpandButton onClick={() => handleExpand(trip, index)}>
                           {expandedTrips[index] ? "–" : "+"}
                         </ExpandButton>
 
-                        {/* NEW/UPDATED: Collapsible AI section */}
                         {expandedTrips[index] && (
                           <AiDetails>
                             {tripAiData[index] ? (
                               <>
-                                {/* PACKING LIST */}
                                 <Subtitle>Packing Checklist</Subtitle>
                                 <ul>
-                                  {tripAiData[index].packing?.map(
-                                    (item, i) => (
-                                      <li key={i}>{item}</li>
-                                    )
-                                  )}
+                                  {tripAiData[index].packing?.map((item, i) => (
+                                    <li key={i}>{item}</li>
+                                  ))}
                                 </ul>
 
-                                {/* BUDGET PLANNER */}
                                 <Subtitle>Budget Planner</Subtitle>
                                 <p>{tripAiData[index].budget}</p>
 
-                                {/* RECOMMENDATIONS */}
                                 <Subtitle>Food & Activities</Subtitle>
-                                {Array.isArray(tripAiData[index].recommendations) &&
-                                  tripAiData[index].recommendations.map((rec, i) => (
-                                    <Recommendation key={i}>
-                                      <strong>{rec.name}</strong> – {rec.description}
-                                      {rec.link && (
-                                        <>
-                                          {" "}
-                                          (<a
-                                            href={rec.link}
-                                            target="_blank"
-                                            rel="noreferrer"
-                                          >
-                                            Details
-                                          </a>)
-                                        </>
-                                      )}
-                                    </Recommendation>
-                                  ))}
+                                {tripAiData[index].recommendations?.map((rec, i) => (
+                                  <Recommendation key={i}>
+                                    <strong>{rec.name}</strong> – {rec.description}
+                                    {rec.link && (
+                                      <>
+                                        {" "}
+                                        (<a href={rec.link} target="_blank" rel="noreferrer">
+                                          Details
+                                        </a>)
+                                      </>
+                                    )}
+                                  </Recommendation>
+                                ))}
                               </>
                             ) : (
                               <p>Loading AI suggestions...</p>
