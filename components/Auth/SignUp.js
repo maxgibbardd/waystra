@@ -1,3 +1,9 @@
+/**
+ * components/Auth/SignUp.js
+ * This component renders the sign-up form.
+ * It creates a new user account using the Firebase-based auth system.
+ */
+
 import { useState } from "react";
 import styled from 'styled-components';
 import { useAuth } from "@/backend/Auth";
@@ -6,18 +12,22 @@ import { useRouter } from "next/router";
 export default function SignUp() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const { signUp } = useAuth();
+    const [error, setError] = useState("");
+    // Changed from signUp to register to match Auth.js export
+    const { register } = useAuth();
     const router = useRouter();
 
     const handleSignup = async (e) => {
         e.preventDefault();
         try {
-            const user = await signUp(email, password);
-            if (user) {
+            setError(""); // Clear previous error
+            const userCredential = await register(email, password);
+            if (userCredential) {
                 router.push("/dashboard");
             }
         } catch (error) {
             console.error("Signup failed:", error.message);
+            setError("Signup failed: " + error.message);
         }
     };
 
@@ -25,16 +35,19 @@ export default function SignUp() {
         <Section>
             <SignUpContainer>
                 <SignUpHeading>Sign Up</SignUpHeading>
+                {error && <ErrorMessage>{error}</ErrorMessage>}
                 <SignUpForm onSubmit={handleSignup}>
                     <StyledInput
                         type="email"
                         placeholder="Email"
                         onChange={(e) => setEmail(e.target.value)}
+                        required
                     />
                     <StyledInput
                         type="password"
                         placeholder="Password"
                         onChange={(e) => setPassword(e.target.value)}
+                        required
                     />
                     <SignUpButton type="submit">Sign Up</SignUpButton>
                 </SignUpForm>
@@ -43,9 +56,7 @@ export default function SignUp() {
     );
 }
 
-
 // ~~~~~~~~~~~~~~ STYLES ~~~~~~~~~~~~~~
-
 const Section = styled.div`
   display: flex;
   justify-content: center;
@@ -108,4 +119,10 @@ const SignUpButton = styled.button`
   &:hover {
     background-color: var(--scnd-light);
   }
+`;
+
+const ErrorMessage = styled.p`
+  color: var(--ac-light);
+  font-size: 16px;
+  margin-bottom: 10px;
 `;

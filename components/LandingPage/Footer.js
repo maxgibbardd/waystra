@@ -1,50 +1,97 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from "react";
+import styled from "styled-components";
+import Link from "next/link";
+import { FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa"; // Social icons
 
-const Footer = () => {
+export default function Footer () {
   return (
     <FooterSection>
       <FooterContainer>
         <LeftContainer>
-          © {new Date().getFullYear()} CMPSC 263
+          © {new Date().getFullYear()} Waystra - AI-Powered Travel Planner
         </LeftContainer>
+
         <CenterContainer>
-          <Link href="#">Privacy Policy</Link> | <Link href="#">Terms of Service</Link>
+          
         </CenterContainer>
+
         <RightContainer>
+          <SocialIcon href="https://github.com/maxgibbardd" target="_blank">
+            <FaGithub />
+          </SocialIcon>
+          <SocialIcon href="https://www.linkedin.com/in/maxwellgibbard/" target="_blank">
+            <FaLinkedin />
+          </SocialIcon>
         </RightContainer>
       </FooterContainer>
     </FooterSection>
   );
 };
 
+// Styled Components
 const FooterSection = styled.footer`
-height: 5vh;
+  width: 100%;
+  background-color: var(--prm-light);
+  color: white;
+  padding: 10px 0;
+  font-size: 16px;
 `;
 
 const FooterContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: auto;
+  padding: 0 20px;
 
-`;
-
-const LeftContainer = styled.div``;
-
-const CenterContainer = styled.div``;
-
-const RightContainer = styled.div`
-
-`;
-
-const Link = styled.a`
-
-`;
-
-const SocialIcon = styled.a`
-  color: #fff;
-  text-decoration: none;
-  font-size: 1.5rem;
-  &:hover {
-    color: #007bff;
+  @media (max-width: 768px) {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
   }
 `;
 
-export default Footer;
+const LeftContainer = styled.div`
+  font-family: var(--font-prm);
+  font-size: 14px;
+`;
+
+const CenterContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+`;
+
+const NavLink = styled(Link)`
+  color: white;
+  text-decoration: none;
+  font-size: 14px;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
+const Separator = styled.span`
+  color: white;
+`;
+
+const RightContainer = styled.div`
+  display: flex;
+  gap: 15px;
+`;
+
+const SocialIcon = styled.a`
+  color: white;
+  font-size: 20px;
+  transition: color 0.3s;
+
+  &:hover {
+    color: var(--scnd-light);
+  }
+`;

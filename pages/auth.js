@@ -1,54 +1,76 @@
-import { useState } from 'react';
-import styled from 'styled-components';
-import Login from '@/components/Auth/Login';
-import SignUp from '@/components/Auth/SignUp';
+/**
+ * pages/auth.js
+ * One page with a tab-based design for login/sign-up.
+ * If you prefer separate pages, you can skip this.
+ */
+
+import { useState } from "react";
+import styled from "styled-components";
+import Login from "@/components/Auth/Login";
+import SignUp from "@/components/Auth/SignUp";
+import Navbar from "@/components/Dashboard/Navbar";
 
 export default function AuthPage() {
-    const [activeTab, setActiveTab] = useState('login');
-    
-    return (
-    <AuthContainer>
+  const [activeTab, setActiveTab] = useState("login");
+
+  return (
+    <>
+      <Navbar />
+      <AuthContainer>
         <TabContainer>
-            <Tab 
-            active={activeTab === 'login'} 
-            onClick={() => setActiveTab('login')}
-            >
-                Login
-                </Tab>
-            <Tab 
-            active={activeTab === 'signup'} 
-            onClick={() => setActiveTab('signup')}
-            >
-                Sign Up
-            </Tab>
+          <Tab
+            active={activeTab === "login"}
+            onClick={() => setActiveTab("login")}
+          >
+            Login
+          </Tab>
+          <Tab
+            active={activeTab === "signup"}
+            onClick={() => setActiveTab("signup")}
+          >
+            Sign Up
+          </Tab>
         </TabContainer>
-        {activeTab === 'login' ? <Login /> : <SignUp />}
-    </AuthContainer>
-    );
+
+        <TabContent>
+          {activeTab === "login" ? <Login /> : <SignUp />}
+        </TabContent>
+      </AuthContainer>
+    </>
+  );
 }
 
 const AuthContainer = styled.div`
-margin: 5% auto;
-width: 400px;
-padding: 20px;
-border-radius: 10px;
-background-color: var(--bg-light);
-box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 60px;
 `;
 
 const TabContainer = styled.div`
-display: flex;
-justify-content: space-around;
-margin-bottom: 20px;
+  display: flex;
+  border-radius: 50px;
+  overflow: hidden;
 `;
 
 const Tab = styled.button`
-background: transparent;
-border: none;
-font-size: 18px;
-padding: 10px;
-color: ${({ active }) => (active ? "var(--prm-light)" : "var(--txt-light)")};
-border-bottom: ${({ active }) => (active ? "2px solid var(--prm-light)" : "none")};
-cursor: pointer;
+  background: ${({ active }) => (active ? "var(--scnd-light)" : "transparent")};
+  color: var(--txt-light);
+  border: none;
+  font-size: 18px;
+  padding: 12px 24px;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out;
+  outline: none;
+
+  &:hover {
+    background: ${({ active }) =>
+      active ? "var(--scnd-dark)" : "var(--scnd-light)"};
+  }
 `;
 
+const TabContent = styled.div`
+  margin-top: 24px;
+  width: 400px;
+  min-height: 300px;
+`;

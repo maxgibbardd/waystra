@@ -50,7 +50,7 @@ export const GlobalStyle = createGlobalStyle`
 `;
 
 // Google Maps API Key
-const GOOGLE_MAPS_API_KEY = "AIzaSyCM_zt-l_E2RYq37B6QO8oSrm_gGTA_XDE";
+const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
 export default function App({ Component, pageProps }) {
   const [isClient, setIsClient] = useState(false);

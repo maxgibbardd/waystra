@@ -1,3 +1,9 @@
+/**
+ * components/Auth/Login.js
+ * This component renders the login form.
+ * It uses the Firebase-based auth system to sign in the user.
+ */
+
 import { useState } from "react";
 import styled from 'styled-components';
 import { useAuth } from "@/backend/Auth";
@@ -6,18 +12,21 @@ import { useRouter } from "next/router";
 export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
     const { login } = useAuth();
     const router = useRouter();
 
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const user = await login(email, password);
-            if (user) {
+            setError(""); // Clear previous error
+            const userCredential = await login(email, password);
+            if (userCredential) {
                 router.push("/dashboard");
             }
         } catch (error) {
             console.error("Login failed:", error.message);
+            setError("Login failed: " + error.message);
         }
     };
 
@@ -25,16 +34,19 @@ export default function Login() {
         <Section>
             <LoginContainer>
                 <LoginHeading>Login</LoginHeading>
+                {error && <ErrorMessage>{error}</ErrorMessage>}
                 <LoginForm onSubmit={handleLogin}>
                     <StyledInput
                         type="email"
                         placeholder="Email"
                         onChange={(e) => setEmail(e.target.value)}
+                        required
                     />
                     <StyledInput
                         type="password"
                         placeholder="Password"
                         onChange={(e) => setPassword(e.target.value)}
+                        required
                     />
                     <LoginButton type="submit">Login</LoginButton>
                 </LoginForm>
@@ -43,9 +55,7 @@ export default function Login() {
     );
 }
 
-
 // ~~~~~~~~~~~~~~ STYLES ~~~~~~~~~~~~~~
-
 const Section = styled.div`
   display: flex;
   justify-content: center;
@@ -108,4 +118,10 @@ const LoginButton = styled.button`
   &:hover {
     background-color: var(--scnd-light);
   }
+`;
+
+const ErrorMessage = styled.p`
+  color: var(--ac-light);
+  font-size: 16px;
+  margin-bottom: 10px;
 `;

@@ -179,12 +179,13 @@ const Tab = styled.button`
   border: none;
   background-color: transparent;
   cursor: pointer;
-  color: var(--txt-light);
   font-size: 20px;
   font-weight: 300;
   font-family: var(--font-prm);
   outline: none;
-  transition: background 0.2s ease-in-out;
+  transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
+
+  color: ${({ theme }) => (theme === "dark" ? "var(--txt-dark)" : "var(--txt-light)")};
 
   &:hover {
     background-color: var(--scnd-light);
@@ -194,6 +195,7 @@ const Tab = styled.button`
     background-color: var(--scnd-light);
   }
 `;
+
 
 const ContentArea = styled.div`
   margin-top: 20px;

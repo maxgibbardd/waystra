@@ -1,67 +1,61 @@
-import { auth } from "./Firebase";
+/**
+ * backend/Auth.js
+ * Provides authentication functionality using Firebase Auth.
+ * Exports functions for login, registration, and logout.
+ */
 import { createContext, useContext, useEffect, useState } from "react";
-import { 
-    signInWithEmailAndPassword, 
-    createUserWithEmailAndPassword, 
-    signOut, 
-    onAuthStateChanged 
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut,
 } from "firebase/auth";
+import { firebaseApp } from "@/backend/Firebase"; // Ensure this is correctly set up
 
+const auth = getAuth(firebaseApp);
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-    const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    // Track user authentication state
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            setUser(user);
-        });
-        return () => unsubscribe();
-    }, []);
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setUser(firebaseUser);
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
 
-    // Sign up function
-    const signUp = async (email, password) => {
-        try {
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            setUser(userCredential.user);
-            return userCredential.user;
-        } catch (error) {
-            console.error("Sign up failed:", error.message);
-            throw error;
-        }
-    };
+  async function login(email, password) {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    setUser(userCredential.user); // Ensure user is updated correctly
+    return userCredential.user;
+  }
 
-    // Login function
-    const login = async (email, password) => {
-        try {
-            const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            setUser(userCredential.user);
-            return userCredential.user;
-        } catch (error) {
-            console.error("Login failed:", error.message);
-            throw error;
-        }
-    };
+  async function register(email, password) {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    setUser(userCredential.user);
+    return userCredential.user;
+  }
 
-    // Logout function
-    const logout = async () => {
-        try {
-            await signOut(auth);
-            setUser(null);
-        } catch (error) {
-            console.error("Logout failed:", error.message);
-        }
-    };
+  async function logout() {
+    await signOut(auth);
+    setUser(null);
+  }
 
-    return (
-        <AuthContext.Provider value={{ user, signUp, login, logout }}>
-            {children}
-        </AuthContext.Provider>
-    );
+  if (loading) {
+    return <div>Loading...</div>; // Prevent flashing of logged-out state
+  }
+
+  return (
+    <AuthContext.Provider value={{ user, login, register, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
-// Custom hook for accessing authentication context
 export function useAuth() {
-    return useContext(AuthContext);
+  return useContext(AuthContext);
 }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Navbar from "@/components/Dashboard/Navbar";
+import Footer from "@/components/LandingPage/Footer"
 import { useAuth } from "@/backend/Auth";
 import { useRouter } from "next/router";
 
@@ -10,6 +11,7 @@ export default function Dashboard() {
   const [savedTrips, setSavedTrips] = useState([]);
   const [expandedTrips, setExpandedTrips] = useState([]); // Boolean array for collapsible sections
   const [tripAiData, setTripAiData] = useState({});       // Stores AI-generated data
+  const [loadingRegenerate, setLoadingRegenerate] = useState(null); // Tracks loading state for regenerating AI data
 
   useEffect(() => {
     if (!user) {
@@ -54,6 +56,7 @@ export default function Dashboard() {
     newExpanded[index] = !currentlyExpanded;
     setExpandedTrips(newExpanded);
 
+    // If we're expanding for the first time and no AI data stored yet...
     if (!currentlyExpanded && !tripAiData[index]) {
       try {
         const response = await fetch("/api/generateTripDetails", {
@@ -66,7 +69,7 @@ export default function Dashboard() {
         if (result.success) {
           const updatedAiData = { ...tripAiData, [index]: result.data };
           setTripAiData(updatedAiData);
-          localStorage.setItem("tripAiData", JSON.stringify(updatedAiData)); // Store AI data persistently
+          localStorage.setItem("tripAiData", JSON.stringify(updatedAiData));
         } else {
           console.error("AI generation error:", result.error);
         }
@@ -76,12 +79,37 @@ export default function Dashboard() {
     }
   };
 
+  // NEW: Regenerate AI data when the button is clicked
+  const handleRegenerate = async (trip, index) => {
+    setLoadingRegenerate(index); // Show loading state for this trip
+
+    try {
+        const response = await fetch("/api/generateTripDetails", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ trip }) // ✅ Ensure correct structure
+        });
+
+        const result = await response.json();
+
+        if (result.success && result.data) {
+            const updatedAiData = { ...tripAiData, [index]: result.data };
+            setTripAiData(updatedAiData);
+            localStorage.setItem("tripAiData", JSON.stringify(updatedAiData));
+        } else {
+            console.error("AI regeneration error:", result.error || "Unexpected response");
+        }
+    } catch (err) {
+        console.error("Error calling AI API:", err);
+    } finally {
+        setLoadingRegenerate(null); // Reset loading state
+    }
+  };
+
+
   return user ? (
     <Section>
       <Navbar />
-      <TopRow>
-        <LogoutButton onClick={logout}>Logout</LogoutButton>
-      </TopRow>
 
       <ContentWrapper>
         <WelcomeMsg>Welcome, {user.email}</WelcomeMsg>
@@ -106,9 +134,12 @@ export default function Dashboard() {
                     </ContentCol>
                     <ContentCol style={{ width: "70%" }}>
                       <TripCard>
-                        {trip.selections
-                          .map((loc) => loc.place_name || "Unnamed Location")
-                          .join(", ")}
+                        {trip.selections.map((loc, i) => (
+                          <React.Fragment key={i}>
+                            {(i + 1) + ") " + loc.place_name || "Unnamed Location"}
+                            <br />
+                          </React.Fragment>
+                        ))}
                         <ExpandButton onClick={() => handleExpand(trip, index)}>
                           {expandedTrips[index] ? "–" : "+"}
                         </ExpandButton>
@@ -117,6 +148,7 @@ export default function Dashboard() {
                           <AiDetails>
                             {tripAiData[index] ? (
                               <>
+                                {/* PACKING LIST */}
                                 <Subtitle>Packing Checklist</Subtitle>
                                 <ul>
                                   {tripAiData[index].packing?.map((item, i) => (
@@ -124,9 +156,20 @@ export default function Dashboard() {
                                   ))}
                                 </ul>
 
+                                {/* BUDGET PLANNER */}
                                 <Subtitle>Budget Planner</Subtitle>
-                                <p>{tripAiData[index].budget}</p>
+                                {Array.isArray(tripAiData[index].budget) &&
+                                  tripAiData[index].budget.map((bItem, i) => (
+                                    <BudgetBreakdown key={i}>
+                                      <p>Travel: {bItem.travel}</p>
+                                      <p>Hotels: {bItem.hotels}</p>
+                                      <p>Food: {bItem.food}</p>
+                                      <p><strong>Total:</strong> {bItem.total}</p>
+                                    </BudgetBreakdown>
+                                  ))
+                                }
 
+                                {/* RECOMMENDATIONS */}
                                 <Subtitle>Food & Activities</Subtitle>
                                 {tripAiData[index].recommendations?.map((rec, i) => (
                                   <Recommendation key={i}>
@@ -134,13 +177,25 @@ export default function Dashboard() {
                                     {rec.link && (
                                       <>
                                         {" "}
-                                        (<a href={rec.link} target="_blank" rel="noreferrer">
+                                        (<a
+                                          href={rec.link}
+                                          target="_blank"
+                                          rel="noreferrer"
+                                        >
                                           Details
                                         </a>)
                                       </>
                                     )}
                                   </Recommendation>
                                 ))}
+
+                                {/* NEW: Regenerate Button */}
+                                <RegenerateButton
+                                  onClick={() => handleRegenerate(trip, index)}
+                                  disabled={loadingRegenerate === index}
+                                >
+                                  {loadingRegenerate === index ? "Regenerating..." : "Regenerate Trip Info"}
+                                </RegenerateButton>
                               </>
                             ) : (
                               <p>Loading AI suggestions...</p>
@@ -158,19 +213,10 @@ export default function Dashboard() {
                 </React.Fragment>
               ))}
             </TableBody>
-
-            <TableFooter>
-              <tr>
-                <FooterCol style={{ width: "20%" }}>
-                  Total Saved Trips: {savedTrips.length}
-                </FooterCol>
-                <FooterCol style={{ width: "70%" }}></FooterCol>
-                <FooterCol style={{ width: "10%" }}></FooterCol>
-              </tr>
-            </TableFooter>
           </StyledTable>
         </TableContainer>
       </ContentWrapper>
+      <Footer />
     </Section>
   ) : null;
 }
@@ -185,29 +231,6 @@ const Section = styled.section`
   flex-direction: column;
 `;
 
-const TopRow = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  padding: 0 20px;
-  margin-bottom: 10px;
-`;
-
-const LogoutButton = styled.button`
-  border: none;
-  border-radius: 50px;
-  padding: 8px 20px;
-  font-size: 16px;
-  cursor: pointer;
-  background-color: var(--scnd-light);
-  color: var(--txt-light);
-  font-family: var(--font-prm);
-  transition: background 0.2s ease-in-out;
-
-  &:hover {
-    background-color: var(--scnd-dark);
-  }
-`;
-
 const ContentWrapper = styled.div`
   flex: 1;
   display: flex;
@@ -216,13 +239,21 @@ const ContentWrapper = styled.div`
 `;
 
 const WelcomeMsg = styled.h1`
-  font-size: 20px;
-  margin-bottom: 16px;
+  font-size: 24px;
+  margin: 30px 0;
+  font-weight: 700;
+  text-align: center;
+  font-family: var(--font-prm);
+  span {
+    color: var(--prm-light);
+  }
 `;
 
 const Title = styled.h2`
-  margin-top: 20px;
-  margin-bottom: 10px;
+  font-size: 30px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-family: var(--font-prm);
 `;
 
 /* TABLE CONTENTS */
@@ -241,15 +272,14 @@ const StyledTable = styled.table`
   font-family: var(--font-prm);
 `;
 
-/* HEADER */
 const TableHeader = styled.thead`
   font-weight: 600;
   font-size: 20px;
-  border-bottom: 1px solid var(--prm-light);
+  border-bottom: 1px solid var(--scnd-light);
   position: sticky;
   top: 0;
   z-index: 2;
-  background-color: var(--bg-light);
+  background-color: 
 `;
 
 const HeaderCol = styled.th`
@@ -257,20 +287,20 @@ const HeaderCol = styled.th`
   text-align: left;
 `;
 
-/* BODY */
 const TableBody = styled.tbody``;
 
 const ContentRow = styled.tr`
   font-size: 20px;
   vertical-align: top;
+  padding-top: 10px;
+  border-bottom: 1px solid var(--prm-light);
 `;
 
 const ContentCol = styled.td``;
 
-/* NEW/UPDATED: Collapsible Card Styles */
+
 const TripCard = styled.div`
   padding: 10px;
-  // border: 1px solid var(--prm-light);
   margin-bottom: 10px;
   border-radius: 4px;
   position: relative;
@@ -293,7 +323,7 @@ const ExpandButton = styled.button`
 const AiDetails = styled.div`
   margin-top: 10px;
   padding: 10px;
-  border-top: 1px solid var(--prm-light);
+  border-top: 1px dashed var(--prm-light);
 `;
 
 const Subtitle = styled.h3`
@@ -302,32 +332,41 @@ const Subtitle = styled.h3`
   font-weight: bold;
 `;
 
+/* Budget breakdown section */
+const BudgetBreakdown = styled.div`
+  margin-bottom: 10px;
+`;
+
 const Recommendation = styled.div`
   margin-bottom: 6px;
 `;
 
-/* FOOTER */
-const TableFooter = styled.tfoot`
-  font-weight: 600;
-  font-size: 20px;
-  border-top: 1px solid var(--prm-light);
-  color: var(--ac-light);
-  position: sticky;
-  bottom: 0;
-  z-index: 2;
-  background-color: #f8f8f8;
-  border-radius: 10px;
-`;
-
-const FooterCol = styled.td`
-  padding: 10px;
-  text-align: left;
-`;
-
-/* REMOVE BUTTON */
 const RemoveButton = styled.button`
   color: var(--ac-light);
   background: none;
   border: none;
+  font-size: 18px;
   cursor: pointer;
+  padding: 10px;
+`;
+
+const RegenerateButton = styled.button`
+  margin-top: 10px;
+  padding: 8px 12px;
+  border: none;
+  background-color: var(--scnd-light);
+  color: var(--txt-light);
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.2s;
+
+  &:hover {
+    background-color: var(--scnd-dark);
+  }
+
+  &:disabled {
+    background-color: grey;
+    cursor: not-allowed;
+  }
 `;

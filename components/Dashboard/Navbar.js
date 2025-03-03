@@ -1,16 +1,18 @@
+/**
+ * components/Dashboard/Navbar.js
+ * Renders the top navigation bar including logo, navigation links, dark mode toggle, and auth button.
+ */
+
 'use client';
 
 import React, { useState } from 'react';
 import Image from "next/image";
 import styled from 'styled-components';
 import Link from 'next/link';
-import { logOut } from '@/backend/Auth';
-import { useStateContext } from '@/context/StateContext';
-import Home from '@/components/Dashboard/Home';
+import { useAuth } from '@/backend/Auth';
 
 const Navbar = () => {
-  // const { setUser } = useStateContext();
-
+  const { user, logout } = useAuth();
   const [darkMode, setDarkMode] = useState(false);
 
   const toggleDarkMode = () => {
@@ -18,38 +20,39 @@ const Navbar = () => {
     document.body.classList.toggle('dark-mode');
   };
 
+  const handleAuthClick = () => {
+    if (user) {
+      logout();
+    }
+  };
+
   return (
     <Nav className={darkMode ? 'dark-mode' : ''}>
-      <Image src="/Waystra_Logo.png" alt="Waystra" width={75} height={55} />
-      <Link href="/"><NavButton>Home</NavButton></Link>
-      <Link href="/plan"><NavButton>Plan</NavButton></Link>
-      <Link href="/dashboard"><NavButton>Dashboard</NavButton></Link>
-      <button onClick={toggleDarkMode} id="toggle">{darkMode ? '⚪️' : '⚫️'}</button>
-      {/* <NavButton onClick={logOut}>Logout</NavButton> */}
+      <Image src="/Waystra_Logo.png" alt="Waystra Logo" width={75} height={55} />
+      <NavLinks>
+        <Link href="/"><NavButton>Home</NavButton></Link>
+        <Link href="/plan"><NavButton>Plan</NavButton></Link>
+        <Link href="/dashboard"><NavButton>Dashboard</NavButton></Link>
+      </NavLinks>
+      <RightSection>
+        <ToggleButton onClick={toggleDarkMode}>
+          {darkMode ? '⚪️' : '⚫️'}
+        </ToggleButton>
+        <AuthButton onClick={handleAuthClick}>
+          {user ? "Logout" : <Link href="/auth">Login</Link>}
+        </AuthButton>
+      </RightSection>
     </Nav>
   );
 };
 
-const Logo = styled(Link)`
-
-`;
-
-const NavLinks = styled.div`
-
-`;
-
-const ButtonLink = styled(Link)`
-
-`;
-
 export default Navbar;
 
-
+// Styled Components
 const Nav = styled.nav`
   width: 100%;
   height: 55px;
   background-color: var(--prm-light);
-  // border-bottom: 3px solid var(--scnd-light);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -60,8 +63,12 @@ const Nav = styled.nav`
 
   &.dark-mode {
     background-color: var(--prm-dark);
-    // border-bottom: 3px solid var(--scnd-dark);
   }
+`;
+
+const NavLinks = styled.div`
+  display: flex;
+  gap: 20px;
 `;
 
 const NavButton = styled.button`
@@ -72,19 +79,41 @@ const NavButton = styled.button`
   border: none;
   color: var(--txt-dark);
   cursor: pointer;
-  transition: color 0.3s ease-in-out;
   padding: 10px;
   border-radius: 10px;
+  transition: background-color 0.3s ease-in-out;
 
   &:hover {
-    // text-decoration: underline;
     background-color: var(--bg-light);
     color: var(--txt-light);
   }
+`;
 
-  &.dark-mode &:hover {
-    // text-decoration: underline;
-    background-color: var(--bg-dark);
-    color: var(--txt-dark);
+const RightSection = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 20px;
+`;
+
+const ToggleButton = styled.button`
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+`;
+
+const AuthButton = styled.button`
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  font-family: var(--font-prm);
+  font-weight: 500;
+  color: var(--txt-dark);
+  cursor: pointer;
+  padding: 10px;
+
+  a {
+    text-decoration: none;
+    color: inherit;
   }
 `;

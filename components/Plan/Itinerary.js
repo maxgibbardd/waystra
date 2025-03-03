@@ -70,10 +70,8 @@ const Display = styled.div`
 
 /* TABLE CONTENTS */
 const TableContainer = styled.div`
-  /* Adjust height as needed */
   max-height: 70vh;
   overflow-y: auto;
-  /* This ensures the sticky header/footer remain within this scrollable area */
   position: relative;
   flex: 1;
 `;
@@ -81,7 +79,7 @@ const TableContainer = styled.div`
 const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed; /* Ensures columns keep their widths */
+  table-layout: fixed;
   font-family: var(--font-prm);
 `;
 
@@ -95,7 +93,7 @@ const TableHeader = styled.thead`
   position: sticky;
   top: 0;
   z-index: 2;
-  background-color: var(--bg-light);
+  // background-color: var(--bg-light);
 `;
 
 const HeaderCol = styled.th`
@@ -127,7 +125,7 @@ const TableFooter = styled.tfoot`
   position: sticky;
   bottom: 0;
   z-index: 2;
-  background-color: #f8f8f8;
+  // background-color: #f8f8f8;
   border-radius: 10px;
 `;
 
