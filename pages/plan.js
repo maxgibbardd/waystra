@@ -30,17 +30,13 @@ export default function Plan({ isLoaded }) {
     );
   };
 
+  // Example localStorage-based “save” function
   const handleSave = () => {
-    // Load existing saved trips from localStorage
     const savedTrips = JSON.parse(localStorage.getItem("savedTrips")) || [];
-
-    // Create a new “trip” object
     const newTrip = {
       selections,
-      savedAt: new Date().toLocaleString(), // Or however you’d like to label it
+      savedAt: new Date().toLocaleString(),
     };
-
-    // Save to localStorage
     savedTrips.push(newTrip);
     localStorage.setItem("savedTrips", JSON.stringify(savedTrips));
     alert("Trip saved!");
@@ -75,26 +71,27 @@ export default function Plan({ isLoaded }) {
       <PlanContainer>
         <Sidebar addSelection={addSelection} />
         <MainContent>
-          <TabContainer>
-            {/* Flex wrapper for the tabs themselves */}
-            <TabWrapper>
-              <Tab
-                className={activeTab === "Itinerary" ? "active" : ""}
-                onClick={() => setActiveTab("Itinerary")}
-              >
-                Itinerary
-              </Tab>
-              <Tab
-                className={activeTab === "Route" ? "active" : ""}
-                onClick={() => setActiveTab("Route")}
-              >
-                Route
-              </Tab>
-            </TabWrapper>
-
-            {/* Button on the right */}
+          {/* Row at the top to place the Save button on the right */}
+          <TopRow>
             <SaveButton onClick={handleSave}>Save</SaveButton>
+          </TopRow>
+
+          {/* Centered Tab Container below it */}
+          <TabContainer>
+            <Tab
+              className={activeTab === "Itinerary" ? "active" : ""}
+              onClick={() => setActiveTab("Itinerary")}
+            >
+              Itinerary
+            </Tab>
+            <Tab
+              className={activeTab === "Route" ? "active" : ""}
+              onClick={() => setActiveTab("Route")}
+            >
+              Route
+            </Tab>
           </TabContainer>
+
           <ContentArea>{renderContent()}</ContentArea>
         </MainContent>
       </PlanContainer>
@@ -122,30 +119,43 @@ const MainContent = styled.div`
   min-width: 25%;
   padding: 20px;
   justify-content: center;
+  position: relative;
+`;
+
+const TopRow = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+`;
+
+const SaveButton = styled.button`
+  border: none;
+  border-radius: 50px;
+  padding: 8px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: var(--scnd-light);
+  color: var(--txt-light);
+  font-family: var(--font-prm);
+  transition: background 0.2s ease-in-out;
+  &:hover {
+    background-color: var(--scnd-dark);
+  }
 `;
 
 const TabContainer = styled.div`
-  /* Parent container: let's keep it centered but also allow space for the Save button */
-  display: flex;
-  align-items: center;
-  width: 60%;
-  margin: 0 auto;
-  border: 1px solid var(--bg-dark);
-  border-radius: 50px;
-  padding: 0 16px;
-  justify-content: space-between;
-`;
-
-const TabWrapper = styled.div`
   display: flex;
   justify-content: center;
-  gap: 20px;
-  flex: 1;
+  border: 1px solid var(--bg-dark);
+  border-radius: 50px;
+  width: 60%;
+  margin: 0 auto;
 `;
 
 const Tab = styled.button`
   padding: 8px 16px;
-  margin: 3px;
+  margin: 4px;
   border-radius: 50px;
   border: none;
   background-color: transparent;
@@ -155,7 +165,7 @@ const Tab = styled.button`
   font-weight: 300;
   font-family: var(--font-prm);
   outline: none;
-  transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
+  transition: background 0.2s ease-in-out;
 
   &:hover {
     background-color: var(--scnd-light);
@@ -164,17 +174,6 @@ const Tab = styled.button`
   &.active {
     background-color: var(--scnd-light);
   }
-`;
-
-const SaveButton = styled.button`
-  border: none;
-  border-radius: 50px;
-  padding: 8px 16px;
-  font-size: 16px;
-  cursor: pointer;
-  background-color: var(--scnd-light);
-  color: var(--txt-light);
-  font-family: var(--font-prm);
 `;
 
 const ContentArea = styled.div`

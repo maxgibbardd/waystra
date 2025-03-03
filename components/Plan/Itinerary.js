@@ -71,7 +71,7 @@ const Display = styled.div`
 /* TABLE CONTENTS */
 const TableContainer = styled.div`
   /* Adjust height as needed */
-  max-height: 75vh;
+  max-height: 70vh;
   overflow-y: auto;
   /* This ensures the sticky header/footer remain within this scrollable area */
   position: relative;
