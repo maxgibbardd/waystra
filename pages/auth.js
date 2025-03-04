@@ -1,9 +1,3 @@
-/**
- * pages/auth.js
- * One page with a tab-based design for login/sign-up.
- * If you prefer separate pages, you can skip this.
- */
-
 import { useState } from "react";
 import styled from "styled-components";
 import Login from "@/components/Auth/Login";
@@ -18,28 +12,23 @@ export default function AuthPage() {
       <Navbar />
       <AuthContainer>
         <TabContainer>
-          <Tab
-            active={activeTab === "login"}
-            onClick={() => setActiveTab("login")}
-          >
+          {/* Tab for switching between Login and Sign Up */}
+          <Tab active={activeTab === "login"} onClick={() => setActiveTab("login")}>
             Login
           </Tab>
-          <Tab
-            active={activeTab === "signup"}
-            onClick={() => setActiveTab("signup")}
-          >
+          <Tab active={activeTab === "signup"} onClick={() => setActiveTab("signup")}>
             Sign Up
           </Tab>
         </TabContainer>
 
-        <TabContent>
-          {activeTab === "login" ? <Login /> : <SignUp />}
-        </TabContent>
+        {/* Render the selected tab's content */}
+        <TabContent>{activeTab === "login" ? <Login /> : <SignUp />}</TabContent>
       </AuthContainer>
     </>
   );
 }
 
+// Styled components for layout and design
 const AuthContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -64,8 +53,7 @@ const Tab = styled.button`
   outline: none;
 
   &:hover {
-    background: ${({ active }) =>
-      active ? "var(--scnd-dark)" : "var(--scnd-light)"};
+    background: ${({ active }) => (active ? "var(--scnd-dark)" : "var(--scnd-light)")};
   }
 `;
 

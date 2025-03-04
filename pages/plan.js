@@ -12,6 +12,7 @@ export default function Plan({ isLoaded }) {
   const [activeTab, setActiveTab] = useState("Itinerary");
   const [selections, setSelections] = useState([]);
 
+  // Adds a selected location to the itinerary
   const addSelection = (location) => {
     if (!location.geometry || !location.geometry.coordinates) {
       console.error("Invalid location data:", location);
@@ -32,6 +33,7 @@ export default function Plan({ isLoaded }) {
     console.log("Updated selections:", selections);
   };
 
+  // Updates the duration of a selected location
   const updateDuration = (index, newDuration) => {
     setSelections((prevSelections) => {
       const updated = [...prevSelections];
@@ -40,13 +42,14 @@ export default function Plan({ isLoaded }) {
     });
   };
 
+  // Removes a location from the itinerary
   const removeLocation = (index) => {
     setSelections((prevSelections) =>
       prevSelections.filter((_, i) => i !== index)
     );
   };
 
-  // Updated save function to use Firestore
+  // Saves the current itinerary to the database
   const handleSave = async () => {
     if (!user) {
       alert("You must be logged in to save a trip!");
@@ -60,6 +63,7 @@ export default function Plan({ isLoaded }) {
     alert("Trip saved to Firestore!");
   };
 
+  // Renders the active tab content (Itinerary or Route)
   const renderContent = () => {
     switch (activeTab) {
       case "Itinerary":
@@ -101,7 +105,7 @@ export default function Plan({ isLoaded }) {
                 className={activeTab === "Route" ? "active" : ""}
                 onClick={() => setActiveTab("Route")}
               >
-                Route
+                Map
               </Tab>
             </TabContainer>
             <SaveButton onClick={handleSave}>Save</SaveButton>
@@ -147,7 +151,7 @@ const SaveButton = styled.button`
   border: none;
   border-radius: 50px;
   padding: 8px 20px;
-  font-size: 16px;
+  font-size: 20px;
   cursor: pointer;
   background-color: var(--scnd-light);
   color: var(--txt-light);

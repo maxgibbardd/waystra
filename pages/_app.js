@@ -5,7 +5,7 @@ import { createGlobalStyle } from "styled-components";
 import { AuthProvider } from "@/backend/Auth";
 import { useJsApiLoader } from "@react-google-maps/api";
 
-export const GlobalStyle = createGlobalStyle`
+const GlobalStyle = createGlobalStyle`
   * {
     box-sizing: border-box;
     margin: 0;
@@ -40,7 +40,7 @@ export const GlobalStyle = createGlobalStyle`
 
   #__next {
     min-height: 100vh;
-    min-width: 100vh;
+    min-width: 100vw;
   }
 
   .dark-mode {
@@ -49,37 +49,26 @@ export const GlobalStyle = createGlobalStyle`
   }
 `;
 
-// Google Maps API Key
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
 export default function App({ Component, pageProps }) {
   const [isClient, setIsClient] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true); // Ensures the component runs only on the client side
-  }, []);
-
   const { isLoaded: googleMapsLoaded } = useJsApiLoader({
     googleMapsApiKey: GOOGLE_MAPS_API_KEY,
     libraries: ["places", "maps"],
   });
 
   useEffect(() => {
-    if (googleMapsLoaded) {
-      setIsLoaded(true);
-    }
-  }, [googleMapsLoaded]);
+    setIsClient(true);
+  }, []);
 
-  if (!isClient) {
-    return null; // Prevents SSR issues
-  }
+  if (!isClient) return null; // Prevents SSR issues
 
   return (
     <>
       <Head>
         <title>Waystra</title>
-        <meta name="description" content="Put a description here about your app" />
+        <meta name="description" content="AI-powered trip planning application" />
         <meta name="robots" content="index, follow" />
         <link rel="apple-touch-icon" sizes="180x180" href="/favicon_package/apple-touch-icon.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon_package/favicon-32x32.png" />
@@ -87,7 +76,10 @@ export default function App({ Component, pageProps }) {
         <link rel="manifest" href="/favicon_package/site.webmanifest" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&family=Rajdhani:wght@400;500;700&display=swap" />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&family=Rajdhani:wght@400;500;700&display=swap"
+        />
         <meta name="msapplication-TileColor" content="#da532c" />
         <meta name="theme-color" content="#ffffff" />
       </Head>
@@ -96,8 +88,7 @@ export default function App({ Component, pageProps }) {
 
       <StateContext>
         <AuthProvider>
-          {/* Pass isLoaded to all components */}
-          <Component {...pageProps} isLoaded={isLoaded} />
+          <Component {...pageProps} isLoaded={googleMapsLoaded} />
         </AuthProvider>
       </StateContext>
     </>
