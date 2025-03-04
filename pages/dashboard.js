@@ -269,13 +269,17 @@ const TableHeader = styled.thead`
   position: sticky;
   top: 0;
   z-index: 2;
-  /* 1) Give the header a background color that matches your theme */
   background-color: var(--bg-light);
+
+  .dark-mode & {
+    background-color: var(--bg-dark);
+  }
 `;
 
 const HeaderCol = styled.th`
   padding: 10px;
   text-align: left;
+  background-color: inherit;
 `;
 
 const TableBody = styled.tbody``;

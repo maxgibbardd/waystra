@@ -54,7 +54,6 @@ const Section = styled.div`
   width: 25%;
   padding: 20px;
   border-right: 2px solid #ccc;
-  background-color: var(--bg-light);
 `;
 
 const SearchInput = styled.input`
