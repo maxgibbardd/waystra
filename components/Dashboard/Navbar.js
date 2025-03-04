@@ -1,8 +1,3 @@
-/**
- * components/Dashboard/Navbar.js
- * Renders the top navigation bar including logo, navigation links, dark mode toggle, and auth button.
- */
-
 'use client';
 
 import React, { useState } from 'react';
@@ -11,15 +6,21 @@ import styled from 'styled-components';
 import Link from 'next/link';
 import { useAuth } from '@/backend/Auth';
 
-const Navbar = () => {
+/**
+ * Navbar component for navigation and authentication controls.
+ * Includes dark mode toggle and login/logout functionality.
+ */
+export default function Navbar() {
   const { user, logout } = useAuth();
   const [darkMode, setDarkMode] = useState(false);
 
+  // Toggles dark mode and applies the theme class to body
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
     document.body.classList.toggle('dark-mode');
   };
 
+  // Handles authentication button click
   const handleAuthClick = () => {
     if (user) {
       logout();
@@ -28,27 +29,31 @@ const Navbar = () => {
 
   return (
     <Nav className={darkMode ? 'dark-mode' : ''}>
+      {/* Logo */}
       <Image src="/Waystra_Logo.png" alt="Waystra Logo" width={75} height={55} />
+      
+      {/* Navigation Links */}
       <NavLinks>
-        <Link href="/"><NavButton>Home</NavButton></Link>
-        <Link href="/plan"><NavButton>Plan</NavButton></Link>
-        <Link href="/dashboard"><NavButton>Dashboard</NavButton></Link>
+        <StyledLink href="/">Home</StyledLink>
+        <StyledLink href="/plan">Plan</StyledLink>
+        <StyledLink href="/dashboard">Dashboard</StyledLink>
       </NavLinks>
+      
+      {/* Right Section: Dark mode toggle & Authentication */}
       <RightSection>
-        <ToggleButton onClick={toggleDarkMode}>
+        <ToggleButton onClick={toggleDarkMode} aria-label="Toggle Dark Mode">
           {darkMode ? '⚪️' : '⚫️'}
         </ToggleButton>
         <AuthButton onClick={handleAuthClick}>
-          {user ? "Logout" : <Link href="/auth">Login</Link>}
+          {user ? "Logout" : <StyledLink href="/auth">Login</StyledLink>}
         </AuthButton>
       </RightSection>
     </Nav>
   );
-};
+}
 
-export default Navbar;
+// -------------------- Styled Components --------------------
 
-// Styled Components
 const Nav = styled.nav`
   width: 100%;
   height: 55px;
@@ -71,14 +76,12 @@ const NavLinks = styled.div`
   gap: 20px;
 `;
 
-const NavButton = styled.button`
-  background: transparent;
+const StyledLink = styled(Link)`
   font-size: 18px;
   font-family: var(--font-prm);
   font-weight: 500;
-  border: none;
+  text-decoration: none;
   color: var(--txt-dark);
-  cursor: pointer;
   padding: 10px;
   border-radius: 10px;
   transition: background-color 0.3s ease-in-out;
@@ -111,9 +114,5 @@ const AuthButton = styled.button`
   color: var(--txt-dark);
   cursor: pointer;
   padding: 10px;
-
-  a {
-    text-decoration: none;
-    color: inherit;
-  }
+  text-decoration: none;
 `;

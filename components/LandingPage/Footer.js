@@ -1,34 +1,36 @@
 import React from "react";
 import styled from "styled-components";
 import Link from "next/link";
-import { FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa"; // Social icons
+import { FaGithub, FaLinkedin } from "react-icons/fa";
 
-export default function Footer () {
+/**
+ * Footer component displaying copyright information and social links.
+ */
+export default function Footer() {
   return (
     <FooterSection>
       <FooterContainer>
+        {/* Left side - Copyright notice */}
         <LeftContainer>
           © {new Date().getFullYear()} Waystra - AI-Powered Travel Planner
         </LeftContainer>
 
-        <CenterContainer>
-          
-        </CenterContainer>
-
+        {/* Right side - Social Media Links */}
         <RightContainer>
-          <SocialIcon href="https://github.com/maxgibbardd" target="_blank">
+          <SocialIcon href="https://github.com/maxgibbardd" target="_blank" aria-label="GitHub">
             <FaGithub />
           </SocialIcon>
-          <SocialIcon href="https://www.linkedin.com/in/maxwellgibbard/" target="_blank">
+          <SocialIcon href="https://www.linkedin.com/in/maxwellgibbard/" target="_blank" aria-label="LinkedIn">
             <FaLinkedin />
           </SocialIcon>
         </RightContainer>
       </FooterContainer>
     </FooterSection>
   );
-};
+}
 
-// Styled Components
+// -------------------- Styled Components --------------------
+
 const FooterSection = styled.footer`
   width: 100%;
   background-color: var(--prm-light);
@@ -57,30 +59,6 @@ const LeftContainer = styled.div`
   font-size: 14px;
 `;
 
-const CenterContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 12px;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-  }
-`;
-
-const NavLink = styled(Link)`
-  color: white;
-  text-decoration: none;
-  font-size: 14px;
-
-  &:hover {
-    text-decoration: underline;
-  }
-`;
-
-const Separator = styled.span`
-  color: white;
-`;
-
 const RightContainer = styled.div`
   display: flex;
   gap: 15px;
@@ -89,7 +67,7 @@ const RightContainer = styled.div`
 const SocialIcon = styled.a`
   color: white;
   font-size: 20px;
-  transition: color 0.3s;
+  transition: color 0.3s ease-in-out;
 
   &:hover {
     color: var(--scnd-light);

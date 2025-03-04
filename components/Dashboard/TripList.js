@@ -2,8 +2,8 @@ import React from "react";
 import styled from "styled-components";
 
 /**
- * Renders a table of user’s saved trips.
- * Accepts trips, removeTrip, handleExpand, etc. as props.
+ * Renders a table of the user's saved trips.
+ * Includes expansion for AI-generated trip details.
  */
 export default function TripList({
   trips,
@@ -12,7 +12,7 @@ export default function TripList({
   onExpand,
   onRemove,
   onRegenerate,
-  loadingRegenerate
+  loadingRegenerate,
 }) {
   return (
     <TableContainer>
@@ -38,11 +38,11 @@ export default function TripList({
                         <br />
                       </React.Fragment>
                     ))}
-
                     <ExpandButton onClick={() => onExpand(trip, index)}>
                       {expandedTrips[index] ? "–" : "+"}
                     </ExpandButton>
 
+                    {/* Expand AI-generated trip details */}
                     {expandedTrips[index] && (
                       <AiDetails>
                         {tripAiData[index] ? (
@@ -68,25 +68,14 @@ export default function TripList({
                               ))}
 
                             <Subtitle>Food & Activities</Subtitle>
-                            {tripAiData[index].recommendations?.map(
-                              (rec, i) => (
-                                <Recommendation key={i}>
-                                  <strong>{rec.name}</strong> – {rec.description}
-                                  {rec.link && (
-                                    <>
-                                      {" "}
-                                      (<a
-                                        href={rec.link}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                      >
-                                        Details
-                                      </a>)
-                                    </>
-                                  )}
-                                </Recommendation>
-                              )
-                            )}
+                            {tripAiData[index].recommendations?.map((rec, i) => (
+                              <Recommendation key={i}>
+                                <strong>{rec.name}</strong> – {rec.description}
+                                {rec.link && (
+                                  <> (<a href={rec.link} target="_blank" rel="noreferrer">Details</a>) </>
+                                )}
+                              </Recommendation>
+                            ))}
 
                             <RegenerateButton
                               onClick={() => onRegenerate(trip, index)}
@@ -116,7 +105,7 @@ export default function TripList({
   );
 }
 
-/* STYLED COMPONENTS (same as in your original) */
+// -------------------- Styled Components --------------------
 
 const TableContainer = styled.div`
   max-height: 70vh;
@@ -148,10 +137,12 @@ const HeaderCol = styled.th`
 `;
 
 const TableBody = styled.tbody``;
+
 const ContentRow = styled.tr`
   font-size: 20px;
   vertical-align: top;
 `;
+
 const ContentCol = styled.td``;
 
 const TripCard = styled.div`
@@ -169,6 +160,7 @@ const ExpandButton = styled.button`
   cursor: pointer;
   font-size: 18px;
   padding: 2px 8px;
+
   &:hover {
     background-color: var(--prm-light);
     color: #fff;
@@ -208,15 +200,16 @@ const RegenerateButton = styled.button`
   margin-top: 10px;
   padding: 8px 12px;
   border: none;
-  background-color: var(--scnd-light);
+  background-color: var(--prm-light);
   color: var(--txt-light);
-  font-size: 14px;
+  font-size: 12px;
+  font-family: var(--font-prm);
   border-radius: 5px;
   cursor: pointer;
   transition: 0.2s;
 
   &:hover {
-    background-color: var(--scnd-dark);
+    background-color: var(--prm-dark);
   }
 
   &:disabled {

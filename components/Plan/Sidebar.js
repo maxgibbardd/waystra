@@ -6,18 +6,17 @@ export default function Sidebar({ addSelection }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [locations, setLocations] = useState([]);
 
-  // Function to search for locations using Mapbox or OpenStreetMap
+  const MAPBOX_ACCESS_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
+
+  // Fetch locations from Mapbox API based on user input
   const fetchLocations = async (query) => {
     if (!query) return;
 
     try {
-      // Using Mapbox API (replace YOUR_MAPBOX_ACCESS_TOKEN with your actual token)
       const response = await axios.get(
-        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
-          query
-        )}.json?access_token=pk.eyJ1IjoibWF4d2VsbGdpYmJhcmRkIiwiYSI6ImNtN25oNHZxNjAxMnIybG9tcWdhamVxY28ifQ.0MNkYws_BZedy1KMRjHyPA&limit=5`
-      );
-
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?` +
+        `access_token=${MAPBOX_ACCESS_TOKEN}&limit=5`
+      );      
       setLocations(response.data.features);
     } catch (error) {
       console.error("Error fetching locations:", error);
@@ -26,7 +25,9 @@ export default function Sidebar({ addSelection }) {
 
   return (
     <Section>
+      {/* Search input for entering location names */}
       <SearchInput
+        type="text"
         placeholder="Search locations..."
         value={searchTerm}
         onChange={(e) => {
@@ -34,12 +35,11 @@ export default function Sidebar({ addSelection }) {
           fetchLocations(e.target.value);
         }}
       />
+      
+      {/* Display search results as selectable locations */}
       <DestinationList>
         {locations.map((location) => (
-          <DestinationItem
-            key={location.id}
-            onClick={() => addSelection(location)} // passes location to plan.js
-          >
+          <DestinationItem key={location.id} onClick={() => addSelection(location)}>
             {location.place_name}
           </DestinationItem>
         ))}
@@ -49,11 +49,12 @@ export default function Sidebar({ addSelection }) {
 }
 
 // Styled Components
+
 const Section = styled.div`
   width: 25%;
   padding: 20px;
-  overflow: hidden;
   border-right: 2px solid #ccc;
+  background-color: var(--bg-light);
 `;
 
 const SearchInput = styled.input`
@@ -61,8 +62,7 @@ const SearchInput = styled.input`
   padding: 10px;
   border-radius: 50px;
   border: 2px solid #ccc;
-  margin-bottom: 20px;
-  font-size: 20px;
+  font-size: 18px;
   font-family: var(--font-prm);
   outline: none;
   background-color: transparent;
@@ -74,15 +74,16 @@ const SearchInput = styled.input`
 `;
 
 const DestinationList = styled.ul`
+  list-style: none;
+  padding: 0;
   font-family: var(--font-prm);
-  list-style-type: none;
-  padding-left: 0;
 `;
 
 const DestinationItem = styled.li`
-  padding: 8px;
+  padding: 10px;
   border-bottom: 1px solid #ccc;
   cursor: pointer;
+  transition: background 0.2s ease-in-out;
 
   &:hover {
     background-color: #f0f0f0;

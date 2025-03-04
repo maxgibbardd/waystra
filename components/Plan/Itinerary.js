@@ -1,7 +1,10 @@
 import styled from "styled-components";
 
+/**
+ * Displays an itinerary table with selected locations, durations, and removal options.
+ */
 export default function Itinerary({ selections, updateDuration, removeLocation }) {
-  // Compute total duration by summing the duration values (assuming duration is in hours)
+  // Compute total duration by summing up the duration values
   const totalDuration = selections.reduce(
     (sum, item) => sum + Number(item.duration || 0),
     0
@@ -9,7 +12,7 @@ export default function Itinerary({ selections, updateDuration, removeLocation }
 
   return (
     <Display>
-      {/* Scrollable container for the entire table */}
+      {/* Scrollable container for itinerary table */}
       <TableContainer>
         <Table>
           <TableHeader>
@@ -23,9 +26,7 @@ export default function Itinerary({ selections, updateDuration, removeLocation }
           <TableBody>
             {selections.map((location, index) => (
               <ContentRow key={index}>
-                <ContentCol style={{ width: "70%" }}>
-                  {location.place_name}
-                </ContentCol>
+                <ContentCol style={{ width: "70%" }}>{location.place_name}</ContentCol>
                 <ContentCol style={{ width: "20%" }}>
                   <DurationInput
                     type="number"
@@ -45,12 +46,8 @@ export default function Itinerary({ selections, updateDuration, removeLocation }
 
           <TableFooter>
             <tr>
-              <FooterCol style={{ width: "70%" }}>
-                Total Locations: {selections.length}
-              </FooterCol>
-              <FooterCol style={{ width: "20%" }}>
-                Total Duration: {totalDuration} days
-              </FooterCol>
+              <FooterCol style={{ width: "70%" }}>Total Locations: {selections.length}</FooterCol>
+              <FooterCol style={{ width: "20%" }}>Total Duration: {totalDuration} days</FooterCol>
               <FooterCol style={{ width: "10%" }}></FooterCol>
             </tr>
           </TableFooter>
@@ -88,12 +85,9 @@ const TableHeader = styled.thead`
   font-weight: 600;
   font-size: 20px;
   border-bottom: 1px solid var(--prm-light);
-
-  /* Keep the header pinned at the top within the scrollable container */
   position: sticky;
   top: 0;
   z-index: 2;
-  // background-color: var(--bg-light);
 `;
 
 const HeaderCol = styled.th`
@@ -102,9 +96,7 @@ const HeaderCol = styled.th`
 `;
 
 /* BODY */
-const TableBody = styled.tbody`
-  /* Let the container (TableContainer) handle scrolling */
-`;
+const TableBody = styled.tbody``;
 
 const ContentRow = styled.tr`
   font-size: 20px;
@@ -125,17 +117,14 @@ const TableFooter = styled.tfoot`
   position: sticky;
   bottom: 0;
   z-index: 2;
-  // background-color: #f8f8f8;
-  border-radius: 10px;
 `;
-
 
 const FooterCol = styled.td`
   padding: 10px;
   text-align: left;
 `;
 
-/* DURATION & REMOVE */
+/* DURATION & REMOVE BUTTONS */
 const DurationInput = styled.input`
   width: 60px;
   padding: 5px;
@@ -150,4 +139,10 @@ const RemoveButton = styled.button`
   background: none;
   border: none;
   cursor: pointer;
+  font-size: 16px;
+  transition: color 0.2s ease-in-out;
+
+  &:hover {
+    color: var(--ac-dark);
+  }
 `;
